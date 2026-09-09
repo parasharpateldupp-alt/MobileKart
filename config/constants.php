@@ -83,10 +83,26 @@ if ($dbUrl) {
     }
 }
 
-// Database Connection Settings (Environment variables take precedence, fallback to local XAMPP)
-if (!defined('DB_HOST')) define('DB_HOST', $parsedHost ?: (getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost')));
-if (!defined('DB_PORT')) define('DB_PORT', $parsedPort ?: (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: '3306')));
-if (!defined('DB_NAME')) define('DB_NAME', $parsedName ?: (getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'online_mobile_distribution')));
-if (!defined('DB_USER')) define('DB_USER', $parsedUser ?: (getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root')));
-if (!defined('DB_PASS')) define('DB_PASS', $parsedPass !== null ? $parsedPass : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : '')));
+$isCloud = (!empty($_ENV['VERCEL']) || !empty($_SERVER['VERCEL']) || str_contains($host, 'vercel.app'));
+
+if ($isCloud) {
+    $defaultHost = 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+    $defaultPort = '4000';
+    $defaultName = 'test';
+    $defaultUser = '4AVQkGYiwq2zQBT.root';
+    $defaultPass = 'BNdSSFFOMEjJYR1K';
+} else {
+    $defaultHost = 'localhost';
+    $defaultPort = '3306';
+    $defaultName = 'online_mobile_distribution';
+    $defaultUser = 'root';
+    $defaultPass = '';
+}
+
+// Database Connection Settings (Environment variables take precedence, fallback to sensible defaults)
+if (!defined('DB_HOST')) define('DB_HOST', $parsedHost ?: (getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: $defaultHost)));
+if (!defined('DB_PORT')) define('DB_PORT', $parsedPort ?: (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: $defaultPort)));
+if (!defined('DB_NAME')) define('DB_NAME', $parsedName ?: (getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: $defaultName)));
+if (!defined('DB_USER')) define('DB_USER', $parsedUser ?: (getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: $defaultUser)));
+if (!defined('DB_PASS')) define('DB_PASS', $parsedPass !== null ? $parsedPass : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : $defaultPass)));
 if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');

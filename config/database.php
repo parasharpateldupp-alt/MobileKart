@@ -30,6 +30,20 @@ function get_db_connection() {
         ? constant('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT') 
         : (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT') ? PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT : 1014);
 
+    $sslCaKey = defined('Pdo\\Mysql::ATTR_SSL_CA') 
+        ? constant('Pdo\\Mysql::ATTR_SSL_CA') 
+        : (defined('PDO::MYSQL_ATTR_SSL_CA') ? PDO::MYSQL_ATTR_SSL_CA : 1007);
+
+    // SSL CA certificate path for secure cloud transport (TiDB Cloud)
+    $caPath = __DIR__ . '/cacert.pem';
+    if (!file_exists($caPath)) {
+        if (file_exists('/etc/ssl/certs/ca-certificates.crt')) {
+            $caPath = '/etc/ssl/certs/ca-certificates.crt';
+        } elseif (file_exists('/etc/pki/tls/certs/ca-bundle.crt')) {
+            $caPath = '/etc/pki/tls/certs/ca-bundle.crt';
+        }
+    }
+
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -37,6 +51,12 @@ function get_db_connection() {
         $initCmdKey                  => "SET NAMES " . DB_CHARSET,
         $sslVerifyKey                => false
     ];
+
+    if (DB_HOST !== 'localhost' && DB_HOST !== '127.0.0.1') {
+        if ($caPath && file_exists($caPath)) {
+            $options[$sslCaKey] = $caPath;
+        }
+    }
 
     try {
         $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
