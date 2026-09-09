@@ -4,46 +4,44 @@
  * System Configuration & DFD Constants
  */
 
-if (!defined('APP_INIT')) {
-    define('APP_INIT', true);
-}
+if (!defined('APP_INIT')) define('APP_INIT', true);
 
 // System Metadata
-define('APP_NAME', 'Online Mobile Purchasing & Distributing System');
-define('APP_SHORT_NAME', 'MobileKart Distribution');
-define('APP_VERSION', '1.0.0');
+if (!defined('APP_NAME')) define('APP_NAME', 'Online Mobile Purchasing & Distributing System');
+if (!defined('APP_SHORT_NAME')) define('APP_SHORT_NAME', 'MobileKart Distribution');
+if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
 // Currency & Taxes (Indian Rupees)
-define('CURRENCY_SYMBOL', '₹');
-define('CURRENCY_CODE', 'INR');
-define('DEFAULT_GST_PERCENT', 18.0); // 18% GST standard on mobile electronics
-define('FREE_SHIPPING_THRESHOLD', 5000.00); // Free delivery above ₹5,000
-define('DEFAULT_SHIPPING_CHARGE', 149.00); // Standard shipping fee
+if (!defined('CURRENCY_SYMBOL')) define('CURRENCY_SYMBOL', '₹');
+if (!defined('CURRENCY_CODE')) define('CURRENCY_CODE', 'INR');
+if (!defined('DEFAULT_GST_PERCENT')) define('DEFAULT_GST_PERCENT', 18.0);
+if (!defined('FREE_SHIPPING_THRESHOLD')) define('FREE_SHIPPING_THRESHOLD', 5000.00);
+if (!defined('DEFAULT_SHIPPING_CHARGE')) define('DEFAULT_SHIPPING_CHARGE', 149.00);
 
 // Stock Reservation Timeout (DFD P1.3.3)
-define('STOCK_RESERVATION_MINUTES', 15);
+if (!defined('STOCK_RESERVATION_MINUTES')) define('STOCK_RESERVATION_MINUTES', 15);
 
 // User Roles (DFD P1.1)
-define('ROLE_ADMIN', 'ADMIN');
-define('ROLE_SUPPLIER', 'SUPPLIER');
-define('ROLE_CUSTOMER', 'CUSTOMER');
+if (!defined('ROLE_ADMIN')) define('ROLE_ADMIN', 'ADMIN');
+if (!defined('ROLE_SUPPLIER')) define('ROLE_SUPPLIER', 'SUPPLIER');
+if (!defined('ROLE_CUSTOMER')) define('ROLE_CUSTOMER', 'CUSTOMER');
 
 // Order States (DFD P1.3, P1.4, P1.5)
-define('ORDER_PENDING_PAYMENT', 'PENDING_PAYMENT');
-define('ORDER_CONFIRMED', 'ORDER_CONFIRMED');
-define('ORDER_PROCESSING', 'PROCESSING');
-define('ORDER_PACKED', 'PACKED');
-define('ORDER_SHIPPED', 'SHIPPED');
-define('ORDER_IN_TRANSIT', 'IN_TRANSIT');
-define('ORDER_OUT_FOR_DELIVERY', 'OUT_FOR_DELIVERY');
-define('ORDER_DELIVERED', 'DELIVERED');
-define('ORDER_CANCELLED', 'CANCELLED');
+if (!defined('ORDER_PENDING_PAYMENT')) define('ORDER_PENDING_PAYMENT', 'PENDING_PAYMENT');
+if (!defined('ORDER_CONFIRMED')) define('ORDER_CONFIRMED', 'ORDER_CONFIRMED');
+if (!defined('ORDER_PROCESSING')) define('ORDER_PROCESSING', 'PROCESSING');
+if (!defined('ORDER_PACKED')) define('ORDER_PACKED', 'PACKED');
+if (!defined('ORDER_SHIPPED')) define('ORDER_SHIPPED', 'SHIPPED');
+if (!defined('ORDER_IN_TRANSIT')) define('ORDER_IN_TRANSIT', 'IN_TRANSIT');
+if (!defined('ORDER_OUT_FOR_DELIVERY')) define('ORDER_OUT_FOR_DELIVERY', 'OUT_FOR_DELIVERY');
+if (!defined('ORDER_DELIVERED')) define('ORDER_DELIVERED', 'DELIVERED');
+if (!defined('ORDER_CANCELLED')) define('ORDER_CANCELLED', 'CANCELLED');
 
 // Payment States (DFD P1.4)
-define('PAYMENT_PENDING', 'PENDING');
-define('PAYMENT_SUCCESS', 'SUCCESS');
-define('PAYMENT_FAILED', 'FAILED');
-define('PAYMENT_CANCELLED', 'CANCELLED');
+if (!defined('PAYMENT_PENDING')) define('PAYMENT_PENDING', 'PENDING');
+if (!defined('PAYMENT_SUCCESS')) define('PAYMENT_SUCCESS', 'SUCCESS');
+if (!defined('PAYMENT_FAILED')) define('PAYMENT_FAILED', 'FAILED');
+if (!defined('PAYMENT_CANCELLED')) define('PAYMENT_CANCELLED', 'CANCELLED');
 
 // Dynamic Base URL Detection
 if (!defined('BASE_URL')) {
@@ -86,9 +84,9 @@ if ($dbUrl) {
 }
 
 // Database Connection Settings (Environment variables take precedence, fallback to local XAMPP)
-define('DB_HOST', $parsedHost ?: (getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost')));
-define('DB_PORT', $parsedPort ?: (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: '3306')));
-define('DB_NAME', $parsedName ?: (getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'online_mobile_distribution')));
-define('DB_USER', $parsedUser ?: (getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root')));
-define('DB_PASS', $parsedPass !== null ? $parsedPass : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : '')));
-define('DB_CHARSET', 'utf8mb4');
+if (!defined('DB_HOST')) define('DB_HOST', $parsedHost ?: (getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost')));
+if (!defined('DB_PORT')) define('DB_PORT', $parsedPort ?: (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: '3306')));
+if (!defined('DB_NAME')) define('DB_NAME', $parsedName ?: (getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'online_mobile_distribution')));
+if (!defined('DB_USER')) define('DB_USER', $parsedUser ?: (getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root')));
+if (!defined('DB_PASS')) define('DB_PASS', $parsedPass !== null ? $parsedPass : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : '')));
+if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');

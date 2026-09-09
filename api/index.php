@@ -4,6 +4,13 @@
  * Online Mobile Purchasing & Distributing System (MobileKart)
  */
 
+// Enable output buffering to prevent "headers already sent"
+ob_start();
+
+// Disable deprecated and notice warnings from contaminating HTTP output
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
+
 $rootDir = dirname(__DIR__);
 
 // Retrieve and normalize the requested URI
