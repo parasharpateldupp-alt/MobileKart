@@ -1,0 +1,13 @@
+﻿# OS & Editor
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.BIN/
+.DS_Store
+.vscode/
+.idea/
+
+# Scratch temp docx
+scratch/*.docx
+__pycache__/
+*.pyc

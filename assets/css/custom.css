@@ -1,0 +1,432 @@
+/**
+ * ONLINE MOBILE PURCHASING & DISTRIBUTING SYSTEM
+ * Flipkart-Inspired E-Commerce Theme
+ */
+
+:root {
+  --fk-blue: #2874f0;
+  --fk-blue-dark: #1b5cbd;
+  --fk-yellow: #ffe500;
+  --fk-orange: #fb641b;
+  --fk-green: #388e3c;
+  --fk-dark: #212121;
+  --fk-gray: #878787;
+  --fk-light-gray: #f1f3f6;
+  --fk-border: #e0e0e0;
+  --fk-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --fk-hover-shadow: 0 8px 24px rgba(40, 116, 240, 0.12);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--fk-light-gray);
+  color: var(--fk-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* -------------------------------------------------------------
+   Flipkart-Inspired Navbar & Header
+------------------------------------------------------------- */
+.fk-navbar {
+  background-color: var(--fk-blue);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+}
+
+.fk-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fk-logo-sub {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--fk-yellow);
+  font-weight: 600;
+  margin-top: -4px;
+}
+
+.fk-search-box {
+  background: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.fk-search-input {
+  border: none;
+  outline: none;
+  box-shadow: none !important;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+}
+
+.fk-search-btn {
+  background: transparent;
+  border: none;
+  color: var(--fk-blue);
+  padding: 0 16px;
+}
+
+.fk-nav-link {
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.fk-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.fk-cart-badge {
+  background-color: var(--fk-yellow);
+  color: var(--fk-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 2px 7px;
+  margin-left: 2px;
+}
+
+/* Secondary Category Strip */
+.fk-category-strip {
+  background: #ffffff;
+  border-bottom: 1px solid var(--fk-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.fk-cat-item {
+  color: var(--fk-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.15s ease;
+}
+
+.fk-cat-item:hover {
+  color: var(--fk-blue);
+}
+
+/* -------------------------------------------------------------
+   Product Cards
+------------------------------------------------------------- */
+.fk-product-card {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.fk-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--fk-hover-shadow);
+  border-color: #c7d2fe;
+}
+
+.fk-product-img-wrapper {
+  height: 230px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  background-color: #fbfbfc;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.fk-product-img {
+  width: auto;
+  height: 200px;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.fk-product-card:hover .fk-product-img {
+  transform: scale(1.05);
+}
+
+.fk-product-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--fk-dark);
+  text-decoration: none;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.7em;
+  margin-bottom: 6px;
+}
+
+.fk-product-title:hover {
+  color: var(--fk-blue);
+}
+
+.fk-rating-badge {
+  background-color: var(--fk-green);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.fk-spec-pill {
+  font-size: 0.78rem;
+  color: var(--fk-gray);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.fk-price {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--fk-dark);
+}
+
+.fk-original-price {
+  font-size: 0.88rem;
+  color: var(--fk-gray);
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+
+.fk-discount-badge {
+  color: var(--fk-green);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+/* -------------------------------------------------------------
+   Buttons
+------------------------------------------------------------- */
+.btn-fk-primary {
+  background-color: var(--fk-blue);
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-fk-primary:hover {
+  background-color: var(--fk-blue-dark);
+  color: #ffffff;
+}
+
+.btn-fk-orange {
+  background-color: var(--fk-orange);
+  color: #ffffff;
+  font-weight: 700;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  box-shadow: 0 2px 6px rgba(251, 100, 27, 0.3);
+  transition: filter 0.15s ease;
+}
+
+.btn-fk-orange:hover {
+  filter: brightness(0.95);
+  color: #ffffff;
+}
+
+.btn-fk-yellow {
+  background-color: var(--fk-yellow);
+  color: var(--fk-dark);
+  font-weight: 700;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  box-shadow: 0 2px 6px rgba(255, 229, 0, 0.3);
+}
+
+.btn-fk-yellow:hover {
+  background-color: #ffd700;
+  color: var(--fk-dark);
+}
+
+/* -------------------------------------------------------------
+   DFD Badge and Educational Tags
+------------------------------------------------------------- */
+.dfd-tag {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dfd-p1 { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+.dfd-p2 { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+.dfd-p3 { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.dfd-p4 { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; }
+.dfd-p5 { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
+
+/* -------------------------------------------------------------
+   Footer
+------------------------------------------------------------- */
+.fk-footer {
+  background-color: #172337;
+  color: #ffffff;
+  padding: 40px 0 20px;
+  margin-top: 50px;
+  font-size: 0.88rem;
+}
+
+.fk-footer a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.fk-footer a:hover {
+  color: #ffffff;
+}
+
+.fk-footer-heading {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #878787;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.fk-footer-bottom {
+  border-top: 1px solid #28364f;
+  padding-top: 20px;
+  margin-top: 30px;
+  color: #878787;
+}
+
+/* -------------------------------------------------------------
+   Specifications Table
+------------------------------------------------------------- */
+.specs-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  width: 25%;
+  font-size: 0.9rem;
+}
+
+.specs-table td {
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------------
+   Tracking Timeline (P1.5)
+------------------------------------------------------------- */
+.tracking-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 30px 0;
+}
+
+.tracking-stepper::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 30px;
+  right: 30px;
+  height: 4px;
+  background-color: #e2e8f0;
+  z-index: 1;
+}
+
+.tracking-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+
+.tracking-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.tracking-step.completed .tracking-icon {
+  background: var(--fk-green);
+  border-color: var(--fk-green);
+  color: #ffffff;
+}
+
+.tracking-step.active .tracking-icon {
+  background: var(--fk-blue);
+  border-color: var(--fk-blue);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(40, 116, 240, 0.2);
+}
+
+.tracking-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.tracking-step.completed .tracking-label,
+.tracking-step.active .tracking-label {
+  color: var(--fk-dark);
+}
