@@ -54,20 +54,41 @@ if (!defined('BASE_URL')) {
     $docRoot = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] ?? ''), '/');
     $appDir = rtrim(str_replace('\\', '/', dirname(__DIR__)), '/');
     
-    if (empty($docRoot) || strcasecmp($docRoot, $appDir) === 0) {
+    if (!empty($_ENV['VERCEL']) || !empty($_SERVER['VERCEL']) || str_contains($host, 'vercel.app')) {
+        $baseUrl = 'https://' . $host;
+    } elseif (empty($docRoot) || strcasecmp($docRoot, $appDir) === 0) {
         $relPath = '';
+        $baseUrl = $protocol . $host;
     } else {
         $relPath = trim(str_ireplace($docRoot, '', $appDir), '/');
+        $baseUrl = $protocol . $host . ($relPath ? '/' . $relPath : '');
     }
-    
-    $baseUrl = $protocol . $host . ($relPath ? '/' . $relPath : '');
     define('BASE_URL', rtrim($baseUrl, '/'));
 }
 
-// Database Connection Settings
-define('DB_HOST', 'localhost');
-define('DB_PORT', '3306');
-define('DB_NAME', 'online_mobile_distribution');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Parse DATABASE_URL / MYSQL_URL if provided (common on cloud hosts)
+$dbUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
+$parsedHost = null;
+$parsedPort = null;
+$parsedName = null;
+$parsedUser = null;
+$parsedPass = null;
+
+if ($dbUrl) {
+    $parts = parse_url($dbUrl);
+    if ($parts) {
+        $parsedHost = $parts['host'] ?? null;
+        $parsedPort = isset($parts['port']) ? (string)$parts['port'] : null;
+        $parsedUser = $parts['user'] ?? null;
+        $parsedPass = $parts['pass'] ?? null;
+        $parsedName = isset($parts['path']) ? ltrim($parts['path'], '/') : null;
+    }
+}
+
+// Database Connection Settings (Environment variables take precedence, fallback to local XAMPP)
+define('DB_HOST', $parsedHost ?: (getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost')));
+define('DB_PORT', $parsedPort ?: (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: '3306')));
+define('DB_NAME', $parsedName ?: (getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'online_mobile_distribution')));
+define('DB_USER', $parsedUser ?: (getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root')));
+define('DB_PASS', $parsedPass !== null ? $parsedPass : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : '')));
 define('DB_CHARSET', 'utf8mb4');
