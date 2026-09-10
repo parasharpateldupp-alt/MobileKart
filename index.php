@@ -16,7 +16,7 @@ try {
 
     // Featured Mobiles
     $featuredStmt = $db->query("
-        SELECT p.*, b.name AS brand_name, c.name AS category_name
+        SELECT p.*, b.name AS brand_name, b.slug AS brand_slug, c.name AS category_name
         FROM products p
         JOIN brands b ON p.brand_id = b.brand_id
         JOIN categories c ON p.category_id = c.category_id
@@ -28,7 +28,7 @@ try {
 
     // Trending Mobiles
     $trendingStmt = $db->query("
-        SELECT p.*, b.name AS brand_name, c.name AS category_name
+        SELECT p.*, b.name AS brand_name, b.slug AS brand_slug, c.name AS category_name
         FROM products p
         JOIN brands b ON p.brand_id = b.brand_id
         JOIN categories c ON p.category_id = c.category_id
@@ -40,7 +40,7 @@ try {
 
     // Top Discount Deals
     $discountStmt = $db->query("
-        SELECT p.*, b.name AS brand_name, c.name AS category_name
+        SELECT p.*, b.name AS brand_name, b.slug AS brand_slug, c.name AS category_name
         FROM products p
         JOIN brands b ON p.brand_id = b.brand_id
         JOIN categories c ON p.category_id = c.category_id
@@ -80,7 +80,7 @@ try {
                             <p class="text-white-50 fs-5 mb-4">Aerospace Titanium • 48MP Fusion Triple Camera with 10x Tetraprism • iOS 20</p>
                             <div class="d-flex align-items-center gap-3">
                                 <a href="<?= BASE_URL ?>/customer/product-details.php?id=1" class="btn btn-fk-yellow btn-lg">
-                                    <i class="fa-solid fa-cart-shopping me-2"></i> Shop Now from ₹1,59,700
+                                    <i class="fa-solid fa-cart-shopping me-2"></i> Shop Now from ₹1,59,706
                                 </a>
                                 <span class="text-white-50 small">No Cost EMI Available</span>
                             </div>
@@ -124,7 +124,7 @@ try {
                             <p class="text-white-50 fs-5 mb-4">8.1" Inner Ceramic OLED • Titanium Flex Hinge • Spatial Video 8K Recording</p>
                             <div class="d-flex align-items-center gap-3">
                                 <a href="<?= BASE_URL ?>/customer/product-details.php?id=2" class="btn btn-fk-yellow btn-lg">
-                                    <i class="fa-solid fa-fire me-2"></i> Pre-Order at ₹1,89,900
+                                    <i class="fa-solid fa-fire me-2"></i> Pre-Order at ₹1,89,905
                                 </a>
                                 <span class="text-white-50 small">Dual MagSafe Induction</span>
                             </div>
@@ -189,10 +189,10 @@ try {
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
-                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <?= brand_logo_html($product, 14) ?>
                                     <span><?= htmlspecialchars($product['brand_name']) ?></span>
                                 </span>
-                                <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
+                                <?= product_rating_badge_html($product['rating'], $product['reviews_count']) ?>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">
                                 <?= htmlspecialchars($product['product_name']) ?>
@@ -256,10 +256,10 @@ try {
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
-                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <?= brand_logo_html($product, 14) ?>
                                     <span><?= htmlspecialchars($product['brand_name']) ?></span>
                                 </span>
-                                <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
+                                <?= product_rating_badge_html($product['rating'], $product['reviews_count']) ?>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">
                                 <?= htmlspecialchars($product['product_name']) ?>
@@ -323,10 +323,10 @@ try {
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
-                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <?= brand_logo_html($product, 14) ?>
                                     <span><?= htmlspecialchars($product['brand_name']) ?></span>
                                 </span>
-                                <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
+                                <?= product_rating_badge_html($product['rating'], $product['reviews_count']) ?>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">
                                 <?= htmlspecialchars($product['product_name']) ?>

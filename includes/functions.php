@@ -29,8 +29,8 @@ function product_image_url($imagePath) {
  */
 function brand_logo_html($brand, $height = 20) {
     if (is_array($brand)) {
-        $rawName = $brand['name'] ?? '';
-        $slug = strtolower(trim($brand['slug'] ?? ''));
+        $rawName = $brand['name'] ?? $brand['brand_name'] ?? '';
+        $slug = strtolower(trim($brand['slug'] ?? $brand['brand_slug'] ?? $brand['name'] ?? $brand['brand_name'] ?? ''));
         $icon = htmlspecialchars($brand['logo_icon'] ?? 'fa-mobile-screen');
     } else {
         $rawName = (string)$brand;
@@ -46,7 +46,8 @@ function brand_logo_html($brand, $height = 20) {
     elseif (str_contains($slug, 'samsung') || $key === 'samsung') $cleanSlug = 'samsung';
     elseif (str_contains($slug, 'google') || $key === 'google') $cleanSlug = 'google';
     elseif (str_contains($slug, 'oneplus') || $key === 'oneplus') $cleanSlug = 'oneplus';
-    elseif (str_contains($slug, 'xiaomi') || str_contains($slug, 'redmi') || $key === 'xiaomi') $cleanSlug = 'xiaomi';
+    elseif (str_contains($slug, 'xiaomi') || $key === 'xiaomi') $cleanSlug = 'xiaomi';
+    elseif (str_contains($slug, 'redmi') || $key === 'redmi') $cleanSlug = 'redmi';
     elseif (str_contains($slug, 'vivo') || $key === 'vivo') $cleanSlug = 'vivo';
     elseif (str_contains($slug, 'realme') || $key === 'realme') $cleanSlug = 'realme';
     elseif (str_contains($slug, 'motorola') || str_contains($slug, 'moto') || $key === 'motorola') $cleanSlug = 'motorola';
@@ -177,6 +178,17 @@ function render_rating_stars($rating) {
     }
     $html .= '</span> <small class="fw-bold text-muted ms-1">' . number_format($rating, 1) . '</small>';
     return $html;
+}
+
+/**
+ * Render product rating badge HTML adhering to strict integrity rule:
+ * If review count is 0, display "No ratings yet", never display fake stars/numbers!
+ */
+function product_rating_badge_html($rating, $reviewsCount = 0) {
+    if ((int)$reviewsCount <= 0 || (float)$rating <= 0) {
+        return '<span class="badge bg-light text-muted border small py-1 px-2"><i class="fa-regular fa-star me-1"></i> No ratings yet</span>';
+    }
+    return '<span class="fk-rating-badge">' . number_format((float)$rating, 1) . ' ★</span>';
 }
 
 /**

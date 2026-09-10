@@ -14,7 +14,7 @@ $productId = (int)($_GET['id'] ?? 0);
 $db = get_db_connection();
 
 $stmt = $db->prepare("
-    SELECT p.*, b.name AS brand_name, c.name AS category_name, s.company_name AS supplier_name
+    SELECT p.*, b.name AS brand_name, b.slug AS brand_slug, c.name AS category_name, s.company_name AS supplier_name
     FROM products p
     JOIN brands b ON p.brand_id = b.brand_id
     JOIN categories c ON p.category_id = c.category_id
@@ -35,6 +35,19 @@ $pageTitle = htmlspecialchars($product['product_name']) . " - Specs & Price - Mo
 $imgStmt = $db->prepare("SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC, is_primary DESC");
 $imgStmt->execute([$productId]);
 $variantImages = $imgStmt->fetchAll();
+
+// Fetch product variants (RAM, Storage, Color tiers)
+$varStmt = $db->prepare("SELECT * FROM product_variants WHERE product_id = ? ORDER BY is_default DESC, final_price ASC");
+$varStmt->execute([$productId]);
+$variants = $varStmt->fetchAll();
+
+// Compute unique storage tiers
+$storageTiers = [];
+foreach ($variants as $v) {
+    if (!in_array($v['storage'], $storageTiers)) {
+        $storageTiers[] = $v['storage'];
+    }
+}
 
 // Check verified purchase eligibility for reviews
 $user = current_user();
@@ -174,7 +187,7 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
             <div class="col-lg-7">
                 <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                     <span class="badge bg-light text-dark border fw-bold d-inline-flex align-items-center gap-2 py-1 px-3">
-                        <?= brand_logo_html($product['brand_name'], 18) ?>
+                        <?= brand_logo_html($product, 18) ?>
                         <span><?= htmlspecialchars($product['brand_name']) ?></span>
                     </span>
                     <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['category_name']) ?></span>
@@ -183,6 +196,34 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
 
                 <h3 class="fw-bold text-dark mb-1"><?= htmlspecialchars($product['product_name']) ?></h3>
                 <div class="text-muted small mb-3">Model: <code><?= htmlspecialchars($product['model']) ?></code> • Active Color: <strong id="selectedColorLabel" class="text-primary"><?= htmlspecialchars($product['color']) ?></strong></div>
+
+                <?php if (!empty($storageTiers)): ?>
+                    <!-- Storage & RAM Tier Selector -->
+                    <div class="mb-3 p-3 rounded-3 bg-light border">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="small fw-bold text-uppercase text-secondary" style="letter-spacing: 0.5px;"><i class="fa-solid fa-hard-drive text-primary me-1"></i> Storage &amp; RAM Tier:</span>
+                            <span class="badge bg-white text-dark border small shadow-sm" id="activeStorageBadge"><?= htmlspecialchars($product['storage']) ?> (<?= htmlspecialchars($product['ram']) ?>)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap" id="storageTiersContainer">
+                            <?php foreach ($storageTiers as $stg): 
+                                $tierVariants = array_filter($variants, fn($v) => $v['storage'] === $stg);
+                                $firstTier = reset($tierVariants);
+                                $isActive = ($product['storage'] === $stg);
+                            ?>
+                                <button type="button" 
+                                        class="btn btn-sm storage-tier-btn py-2 px-3 rounded-3 fw-bold <?= $isActive ? 'btn-primary text-white shadow-sm' : 'btn-outline-secondary bg-white text-dark' ?>"
+                                        data-storage="<?= htmlspecialchars($stg) ?>"
+                                        data-ram="<?= htmlspecialchars($firstTier['ram'] ?? '') ?>"
+                                        onclick="switchStorageTier('<?= htmlspecialchars($stg) ?>', this)">
+                                    <?= htmlspecialchars($stg) ?>
+                                    <span class="d-block small fw-normal <?= $isActive ? 'text-white-50' : 'text-muted' ?>">
+                                        from <?= format_inr($firstTier['final_price'], false) ?>
+                                    </span>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <?php if (!empty($variantImages)): ?>
                     <!-- Color Swatches Selector -->
@@ -207,18 +248,16 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
 
                 <!-- Rating -->
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <span class="fk-rating-badge fs-6 px-2 py-1"><?= number_format($product['rating'], 1) ?> ★</span>
+                    <?= product_rating_badge_html($product['rating'], $product['reviews_count']) ?>
                     <span class="text-muted small fw-semibold"><?= (int)$product['reviews_count'] ?> Verified Ratings &amp; Reviews</span>
                 </div>
 
                 <!-- Price Section -->
                 <div class="bg-light p-3 rounded-3 mb-3">
                     <div class="d-flex align-items-baseline gap-2">
-                        <span class="display-6 fw-bold text-dark"><?= format_inr($product['final_price'], false) ?></span>
-                        <?php if ($product['discount'] > 0): ?>
-                            <span class="fs-5 text-muted text-decoration-line-through"><?= format_inr($product['price'], false) ?></span>
-                            <span class="fs-5 fw-bold text-success"><?= $product['discount'] ?>% off</span>
-                        <?php endif; ?>
+                        <span class="display-6 fw-bold text-dark" id="displayedFinalPrice"><?= format_inr($product['final_price'], false) ?></span>
+                        <span class="fs-5 text-muted text-decoration-line-through <?= $product['discount'] > 0 ? '' : 'd-none' ?>" id="displayedOriginalPrice"><?= format_inr($product['price'], false) ?></span>
+                        <span class="fs-5 fw-bold text-success <?= $product['discount'] > 0 ? '' : 'd-none' ?>" id="displayedDiscountBadge"><?= $product['discount'] ?>% off</span>
                     </div>
                     <div class="text-muted small mt-1">
                         <i class="fa-solid fa-receipt text-primary me-1"></i> Inclusive of all taxes (18% GST). Free shipping applicable.
@@ -226,7 +265,7 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
                 </div>
 
                 <!-- Stock State -->
-                <div class="mb-3">
+                <div class="mb-3" id="stockAlertContainer">
                     <?php if ($product['stock_quantity'] <= 0): ?>
                         <div class="alert alert-danger py-2 px-3 small fw-bold d-inline-flex align-items-center">
                             <i class="fa-solid fa-circle-xmark me-2"></i> Currently Out of Stock
@@ -326,11 +365,11 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
                     </tr>
                     <tr>
                         <th>System RAM</th>
-                        <td><?= htmlspecialchars($product['ram']) ?> LPDDR5X</td>
+                        <td><?= htmlspecialchars($product['ram']) ?></td>
                     </tr>
                     <tr>
                         <th>Internal Storage</th>
-                        <td><?= htmlspecialchars($product['storage']) ?> UFS 4.0</td>
+                        <td><?= htmlspecialchars($product['storage']) ?></td>
                     </tr>
 
                     <tr>
@@ -462,12 +501,99 @@ function changeDetailQty(delta) {
     input.value = val;
 }
 
+const productVariants = <?= json_encode($variants) ?>;
+let activeStorage = <?= json_encode($product['storage']) ?>;
+let activeColor = <?= json_encode($product['color']) ?>;
+
+function formatINR(amount) {
+    amount = Math.round(amount);
+    let s = amount.toString();
+    if (s.length > 3) {
+        let last3 = s.slice(-3);
+        let rem = s.slice(0, -3);
+        let groups = [];
+        while (rem.length > 2) {
+            groups.unshift(rem.slice(-2));
+            rem = rem.slice(0, -2);
+        }
+        if (rem.length > 0) groups.unshift(rem);
+        return '₹' + groups.join(',') + ',' + last3;
+    }
+    return '₹' + s;
+}
+
+function syncVariantData() {
+    if (!productVariants || productVariants.length === 0) return;
+    
+    // Find variant matching activeStorage and activeColor
+    let match = productVariants.find(v => v.storage === activeStorage && v.color.toLowerCase() === activeColor.toLowerCase());
+    if (!match) {
+        match = productVariants.find(v => v.storage === activeStorage) || productVariants[0];
+    }
+    
+    if (match) {
+        const finalPriceEl = document.getElementById('displayedFinalPrice');
+        const origPriceEl = document.getElementById('displayedOriginalPrice');
+        const discEl = document.getElementById('displayedDiscountBadge');
+        const badgeStorage = document.getElementById('activeStorageBadge');
+        const qtyInput = document.getElementById('detailQuantity');
+        
+        if (finalPriceEl) finalPriceEl.textContent = formatINR(match.final_price);
+        if (origPriceEl) {
+            if (parseInt(match.discount) > 0) {
+                origPriceEl.textContent = formatINR(match.price);
+                origPriceEl.classList.remove('d-none');
+            } else {
+                origPriceEl.classList.add('d-none');
+            }
+        }
+        if (discEl) {
+            if (parseInt(match.discount) > 0) {
+                discEl.textContent = match.discount + '% off';
+                discEl.classList.remove('d-none');
+            } else {
+                discEl.classList.add('d-none');
+            }
+        }
+        if (badgeStorage) {
+            badgeStorage.textContent = match.storage + ' (' + match.ram + ')';
+        }
+        if (qtyInput) {
+            qtyInput.max = Math.max(1, parseInt(match.stock_quantity));
+        }
+    }
+}
+
+function switchStorageTier(storage, clickedBtn) {
+    activeStorage = storage;
+    document.querySelectorAll('.storage-tier-btn').forEach(btn => {
+        btn.classList.remove('btn-primary', 'text-white', 'shadow-sm');
+        btn.classList.add('btn-outline-secondary', 'bg-white', 'text-dark');
+        const sub = btn.querySelector('span');
+        if (sub) {
+            sub.classList.remove('text-white-50');
+            sub.classList.add('text-muted');
+        }
+    });
+    if (clickedBtn) {
+        clickedBtn.classList.add('btn-primary', 'text-white', 'shadow-sm');
+        clickedBtn.classList.remove('btn-outline-secondary', 'bg-white', 'text-dark');
+        const sub = clickedBtn.querySelector('span');
+        if (sub) {
+            sub.classList.add('text-white-50');
+            sub.classList.remove('text-muted');
+        }
+    }
+    syncVariantData();
+}
+
 function addCurrentToCart(buyNow) {
     const qty = parseInt(document.getElementById('detailQuantity').value) || 1;
     addToCart(<?= $productId ?>, qty, buyNow);
 }
 
 function switchProductColor(imageUrl, colorName, clickedEl) {
+    activeColor = colorName;
     const mainImg = document.getElementById('mainProductImage');
     const colorLabel = document.getElementById('selectedColorLabel');
     const colorBadge = document.getElementById('colorBadgeName');
@@ -517,6 +643,8 @@ function switchProductColor(imageUrl, colorName, clickedEl) {
             tb.classList.remove('border-light-subtle');
         }
     });
+
+    syncVariantData();
 }
 </script>
 

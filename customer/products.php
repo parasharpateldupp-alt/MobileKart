@@ -40,7 +40,7 @@ if ($q !== '') {
 }
 
 if ($categorySlug !== '') {
-    $where[] = "c.slug = ?";
+    $where[] = "p.product_id IN (SELECT pc.product_id FROM product_categories pc JOIN categories c2 ON pc.category_id = c2.category_id WHERE c2.slug = ?)";
     $params[] = $categorySlug;
 }
 
@@ -63,18 +63,36 @@ if ($maxPrice !== null) {
 }
 
 if (!empty($ramFilter)) {
-    $placeholders = implode(',', array_fill(0, count($ramFilter), '?'));
-    $where[] = "p.ram IN ({$placeholders})";
+    $ramConds = [];
     foreach ($ramFilter as $r) {
-        $params[] = $r;
+        $digits = preg_replace('/[^0-9]/', '', $r);
+        if ($digits) {
+            $ramConds[] = "p.ram LIKE ?";
+            $params[] = "%{$digits}%";
+        } else {
+            $ramConds[] = "p.ram = ?";
+            $params[] = $r;
+        }
+    }
+    if (!empty($ramConds)) {
+        $where[] = "(" . implode(" OR ", $ramConds) . ")";
     }
 }
 
 if (!empty($storageFilter)) {
-    $placeholders = implode(',', array_fill(0, count($storageFilter), '?'));
-    $where[] = "p.storage IN ({$placeholders})";
+    $storageConds = [];
     foreach ($storageFilter as $s) {
-        $params[] = $s;
+        $digits = preg_replace('/[^0-9]/', '', $s);
+        if ($digits) {
+            $storageConds[] = "p.storage LIKE ?";
+            $params[] = "%{$digits}%";
+        } else {
+            $storageConds[] = "p.storage = ?";
+            $params[] = $s;
+        }
+    }
+    if (!empty($storageConds)) {
+        $where[] = "(" . implode(" OR ", $storageConds) . ")";
     }
 }
 
@@ -95,6 +113,8 @@ if ($filterSpecial === 'featured') {
 
 // Sorting logic
 $orderBy = match($sort) {
+    'brand_asc'     => "b.name ASC, p.product_name ASC",
+    'brand_desc'    => "b.name DESC, p.product_name ASC",
     'price_asc'     => "p.final_price ASC",
     'price_desc'    => "p.final_price DESC",
     'rating_desc'   => "p.rating DESC",
@@ -120,7 +140,7 @@ $products = $stmt->fetchAll();
 $allCategories = $db->query("SELECT * FROM categories WHERE status = 'ACTIVE' ORDER BY name ASC")->fetchAll();
 $allBrands = $db->query("SELECT * FROM brands WHERE status = 'ACTIVE' ORDER BY name ASC")->fetchAll();
 $allRams = ['8 GB', '12 GB', '16 GB'];
-$allStorages = ['128 GB', '256 GB', '512 GB'];
+$allStorages = ['128 GB', '256 GB', '512 GB', '1 TB'];
 ?>
 
 <div class="container py-4">
@@ -266,6 +286,8 @@ $allStorages = ['128 GB', '256 GB', '512 GB'];
                             ?>
                             <select name="sort" class="form-select form-select-sm" onchange="document.getElementById('sortForm').submit();">
                                 <option value="popularity" <?= $sort === 'popularity' ? 'selected' : '' ?>>Popularity</option>
+                                <option value="brand_asc" <?= $sort === 'brand_asc' ? 'selected' : '' ?>>Brand: A to Z</option>
+                                <option value="brand_desc" <?= $sort === 'brand_desc' ? 'selected' : '' ?>>Brand: Z to A</option>
                                 <option value="price_asc" <?= $sort === 'price_asc' ? 'selected' : '' ?>>Price: Low to High</option>
                                 <option value="price_desc" <?= $sort === 'price_desc' ? 'selected' : '' ?>>Price: High to Low</option>
                                 <option value="rating_desc" <?= $sort === 'rating_desc' ? 'selected' : '' ?>>Customer Rating</option>
@@ -300,10 +322,10 @@ $allStorages = ['128 GB', '256 GB', '512 GB'];
                                 
                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                     <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
-                                        <?= brand_logo_html($product['brand_name'], 14) ?>
+                                        <?= brand_logo_html($product, 14) ?>
                                         <span><?= htmlspecialchars($product['brand_name']) ?></span>
                                     </span>
-                                    <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
+                                    <?= product_rating_badge_html($product['rating'], $product['reviews_count']) ?>
                                 </div>
 
                                 <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">

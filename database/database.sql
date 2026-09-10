@@ -128,6 +128,40 @@ CREATE TABLE `products` (
 -- ------------------------------------------------------------
 -- D2: PRODUCT / INVENTORY DB - Table: product_images
 -- ------------------------------------------------------------
+
+-- ------------------------------------------------------------
+-- D2: PRODUCT / INVENTORY DB - Table: product_categories (Many-to-Many)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `product_categories`;
+CREATE TABLE `product_categories` (
+  `product_id` INT NOT NULL,
+  `category_id` INT NOT NULL,
+  PRIMARY KEY (`product_id`, `category_id`),
+  CONSTRAINT `fk_pc_prod` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pc_cat` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- D2: PRODUCT / INVENTORY DB - Table: product_variants
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `product_variants`;
+CREATE TABLE `product_variants` (
+  `variant_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `product_id` INT NOT NULL,
+  `sku` VARCHAR(100) NOT NULL UNIQUE,
+  `ram` VARCHAR(50) NOT NULL,
+  `storage` VARCHAR(50) NOT NULL,
+  `color` VARCHAR(100) NOT NULL,
+  `color_hex` VARCHAR(20) DEFAULT NULL,
+  `image_url` VARCHAR(255) DEFAULT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
+  `discount` INT DEFAULT 0,
+  `final_price` DECIMAL(10,2) NOT NULL,
+  `stock_quantity` INT NOT NULL DEFAULT 15,
+  `is_default` TINYINT(1) DEFAULT 0,
+  CONSTRAINT `fk_pv_prod` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `product_images`;
 CREATE TABLE `product_images` (
   `image_id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -465,52 +499,177 @@ INSERT INTO `system_settings` (`setting_key`, `setting_value`, `description`) VA
 INSERT INTO `users` (`user_id`, `name`, `email`, `phone`, `password_hash`, `role`, `status`, `address`, `city`, `state`, `pincode`, `created_at`) VALUES
 (1, 'PATANJALI', 'patanjali@patu.com', '9974410030', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'ADMIN', 'ACTIVE', 'dandi daji faliya ta.dist. valsad 396385', 'Valsad', 'Gujarat', '396385', NOW());
 
+-- Authorized Brand Distribution Supplier Users
+INSERT INTO `users` (`user_id`, `name`, `email`, `phone`, `password_hash`, `role`, `status`, `address`, `city`, `state`, `pincode`, `created_at`) VALUES
+(2, 'Apple India Authorized', 'apple.dist@mobilekart.com', '9900000001', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'BKC Bandra East', 'Mumbai', 'Maharashtra', '400051', NOW()),
+(3, 'Samsung Electronics India', 'samsung.dist@mobilekart.com', '9900000002', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Two Horizon Center Golf Course Rd', 'Gurugram', 'Haryana', '122002', NOW()),
+(4, 'Google Hardware India', 'google.dist@mobilekart.com', '9900000003', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Old Madras Rd', 'Bengaluru', 'Karnataka', '560016', NOW()),
+(5, 'OnePlus Direct India', 'oneplus.dist@mobilekart.com', '9900000004', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Brigade Rd', 'Bengaluru', 'Karnataka', '560001', NOW()),
+(6, 'Xiaomi Technology India', 'xiaomi.dist@mobilekart.com', '9900000005', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Outer Ring Rd', 'Bengaluru', 'Karnataka', '560103', NOW()),
+(7, 'Vivo Mobile India', 'vivo.dist@mobilekart.com', '9900000006', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'World Trade Center', 'Noida', 'Uttar Pradesh', '201301', NOW()),
+(8, 'Realme Mobile India', 'realme.dist@mobilekart.com', '9900000007', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Cyber City', 'Gurugram', 'Haryana', '122002', NOW()),
+(9, 'Motorola Mobility India', 'motorola.dist@mobilekart.com', '9900000008', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'DLF Cyber City', 'Gurugram', 'Haryana', '122002', NOW()),
+(10, 'Nothing Technology India', 'nothing.dist@mobilekart.com', '9900000009', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Connaught Place', 'New Delhi', 'Delhi', '110001', NOW()),
+(11, 'iQOO Performance India', 'iqoo.dist@mobilekart.com', '9900000010', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Sector 126', 'Noida', 'Uttar Pradesh', '201304', NOW()),
+(12, 'Redmi India Official', 'redmi.dist@mobilekart.com', '9900000011', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'SUPPLIER', 'ACTIVE', 'Outer Ring Rd Devarabisanahalli', 'Bengaluru', 'Karnataka', '560103', NOW());
+
+
 -- Suppliers table
 INSERT INTO `suppliers` (`supplier_id`, `user_id`, `company_name`, `gst_number`, `contact_person`, `approval_status`, `rating`) VALUES
-(1, 1, 'PATANJALI Mobile Distribution', '29AAAAA0000A1Z5', 'PATANJALI', 'APPROVED', 4.95);
+(1, 2, 'Apple India Authorized Distribution Ltd.', '07AAAAA0001A1Z1', 'Apple Supply Operations', 'APPROVED', 4.95),
+(2, 3, 'Samsung Electronics India Official Distribution', '27AAAAA0002A1Z2', 'Samsung Logistics Network', 'APPROVED', 4.9),
+(3, 4, 'Google Hardware Distribution India', '29AAAAA0003A1Z3', 'Google Devices Team', 'APPROVED', 4.88),
+(4, 5, 'OnePlus Direct Distribution India', '33AAAAA0004A1Z4', 'OnePlus Supply Chain', 'APPROVED', 4.85),
+(5, 6, 'Xiaomi Technology India Distribution', '29AAAAA0005A1Z5', 'Xiaomi Wholesale Operations', 'APPROVED', 4.82),
+(6, 7, 'Vivo Mobile India Official Distribution', '09AAAAA0006A1Z6', 'Vivo Commercial Logistics', 'APPROVED', 4.8),
+(7, 8, 'Realme Mobile Distribution India', '09AAAAA0007A1Z7', 'Realme Sales Hub', 'APPROVED', 4.78),
+(8, 9, 'Motorola Mobility India Distribution', '27AAAAA0008A1Z8', 'Motorola Enterprise Logistics', 'APPROVED', 4.75),
+(9, 10, 'Nothing Technology Authorized Distribution', '07AAAAA0009A1Z9', 'Nothing Devices India', 'APPROVED', 4.8),
+(10, 11, 'iQOO Performance Smartphone Distribution India', '09AAAAA0010A1Z0', 'iQOO India Distribution', 'APPROVED', 4.85),
+(11, 12, 'Redmi India Official Authorized Distribution', '29AAAAA0011A1Z1', 'Redmi Distribution Network', 'APPROVED', 4.8);
 
 -- Categories
 INSERT INTO `categories` (`category_id`, `name`, `slug`, `description`, `icon`) VALUES
-(1, 'Flagship Mobiles', 'flagship-mobiles', 'High-performance premium smartphones with cutting-edge processors and displays', 'fa-crown'),
-(2, '5G Smartphones', '5g-smartphones', 'Next-generation high speed connectivity smartphones', 'fa-wifi'),
-(3, 'Camera Centric', 'camera-centric', 'Studio-quality sensors, telephoto periscope zoom, and optical stabilization', 'fa-camera'),
-(4, 'Gaming Phones', 'gaming-phones', 'High refresh rates, vapor chamber cooling, and high capacity batteries', 'fa-gamepad'),
-(5, 'Budget & Value', 'budget-value', 'Reliable everyday mobile phones packed with essential features', 'fa-wallet'),
-(6, 'Foldable Phones', 'foldable-phones', 'Revolutionary folding screen devices offering dual tablet and phone utility', 'fa-tablet-alt');
+(1, 'Flagship Mobiles', 'flagship-mobiles', 'Top-tier cutting edge flagships with latest silicon and premium chassis', 'fa-crown'),
+(2, '5G Smartphones', '5g-smartphones', 'Next-generation high speed 5G enabled smartphones', 'fa-bolt'),
+(3, 'Camera Centric', 'camera-centric', 'Smartphones with pro grade studio cameras, large sensors, and periscope zoom', 'fa-camera'),
+(4, 'Gaming Phones', 'gaming-phones', 'High refresh rate displays, advanced cooling, and extreme gaming performance', 'fa-gamepad'),
+(5, 'Budget & Value', 'budget-value', 'Feature-packed reliable smartphones offering unmatched value for money', 'fa-tags'),
+(6, 'Foldable Phones', 'foldable-phones', 'Futuristic flexible display smartphones with innovative hinge engineering', 'fa-book-open');
 
 -- Brands
 INSERT INTO `brands` (`brand_id`, `name`, `slug`, `logo_icon`) VALUES
-(1, 'Samsung', 'samsung', 'fa-mobile-alt'),
+(1, 'Samsung', 'samsung', 'fa-mobile-screen'),
 (2, 'Apple', 'apple', 'fa-apple'),
-(3, 'OnePlus', 'oneplus', 'fa-plus-square'),
-(4, 'Xiaomi', 'xiaomi', 'fa-bolt'),
-(5, 'Nothing', 'nothing', 'fa-dot-circle'),
-(6, 'Vivo', 'vivo', 'fa-play-circle'),
-(7, 'Realme', 'realme', 'fa-star'),
-(8, 'Motorola', 'motorola', 'fa-shield-alt'),
+(3, 'OnePlus', 'oneplus', 'fa-mobile-screen'),
+(4, 'Xiaomi', 'xiaomi', 'fa-mobile-screen'),
+(5, 'Nothing', 'nothing', 'fa-mobile-screen'),
+(6, 'Vivo', 'vivo', 'fa-mobile-screen'),
+(7, 'Realme', 'realme', 'fa-mobile-screen'),
+(8, 'Motorola', 'motorola', 'fa-mobile-screen'),
 (9, 'Google', 'google', 'fa-google'),
-(10, 'iQOO', 'iqoo', 'fa-tachometer-alt');
+(10, 'iQOO', 'iqoo', 'fa-mobile-screen'),
+(11, 'Redmi', 'redmi', 'fa-mobile-screen');
 
 -- Products (16 realistic models with full specs and Indian pricing in INR)
-INSERT INTO `products` (`product_id`, `supplier_id`, `brand_id`, `category_id`, `product_name`, `model`, `description`, `price`, `discount`, `final_price`, `stock_quantity`, `minimum_stock`, `ram`, `storage`, `processor`, `display`, `camera`, `battery`, `operating_system`, `color`, `warranty`, `image`, `status`, `is_featured`, `is_trending`, `rating`) VALUES
-(1, 1, 1, 1, 'Apple iPhone 18 Pro Max', 'A3290', 'Apple 2026 flagship with revolutionary TSMC 2nm A20 Pro Bionic silicon, Grade 5 Aerospace Titanium chassis, 48MP Fusion Triple Camera with 10x Tetraprism optical zoom, 6.9-inch 120Hz ProMotion Super Retina XDR OLED, and iOS 20.', 169900.00, 6, 159700.00, 35, 5, '16GB Unified', '512GB NVMe', 'Apple A20 Pro 2nm Hexa-Core', '6.9" ProMotion Super Retina XDR OLED (1-120Hz, 3000 nits)', '48MP Triple Fusion + 48MP Ultra-Wide + 48MP 10x Tetraprism Telephoto', '4850mAh Qi3 MagSafe 45W', 'iOS 20', 'Natural Titanium Glass', '1 Year Apple International Warranty', 'assets/images/products/iphone18_promax_natural.png', 'ACTIVE', 1, 1, 4.95),
-(2, 1, 1, 4, 'Apple iPhone Duo (Foldable)', 'A3300-DUO', 'Revolutionary Apple foldable smartphone featuring dual seamless Ceramic Ultra-Thin Glass displays, Titanium Flex Hinge, A20 Pro chip, Spatial Video 8K recording, and dual MagSafe induction.', 199900.00, 5, 189900.00, 20, 3, '16GB Unified', '1TB NVMe', 'Apple A20 Pro 2nm Bionic', '8.1" Inner Foldable Ceramic OLED 120Hz + 6.3" Outer Cover Display', 'Dual 48MP Fusion Photonic Engine + 12MP TrueDepth FaceID', '5200mAh Dual-Cell MagSafe 50W', 'iOS 20 Fold Edition', 'Titanium Silver Flex', '1 Year AppleCare+ Included', 'assets/images/products/iphone_duo_open.jpg', 'ACTIVE', 1, 1, 4.98),
-(3, 1, 1, 1, 'Apple iPhone 18 Pro', 'A3288', 'Compact pro powerhouse with A20 Pro silicon, 6.3-inch borderless ProMotion OLED, 48MP triple camera system with 5x optical zoom, and iOS 20.', 139900.00, 7, 130100.00, 40, 5, '12GB Unified', '256GB NVMe', 'Apple A20 Pro 2nm', '6.3" Super Retina XDR OLED 120Hz', '48MP Main + 48MP Ultra-Wide + 48MP 5x Telephoto', '4200mAh MagSafe 35W', 'iOS 20', 'Desert Titanium', '1 Year Manufacturer Warranty', 'assets/images/products/iphone18_pro_desert.png', 'ACTIVE', 0, 1, 4.88),
-(4, 1, 1, 2, 'Apple iPhone 18', 'A3285', 'Modern standard iPhone featuring Dynamic Island 2, 120Hz ProMotion display, Apple A20 chip, Camera Control haptic button, and dual 48MP fusion lenses.', 84900.00, 10, 76410.00, 55, 8, '8GB Unified', '256GB NVMe', 'Apple A20 Bionic', '6.1" OLED 120Hz ProMotion', '48MP Fusion Main + 48MP Ultra-Wide', '3800mAh Fast Charge', 'iOS 20', 'Ultramarine Blue', '1 Year Manufacturer Warranty', 'assets/images/products/iphone18_ultramarine.png', 'ACTIVE', 0, 1, 4.75),
-(5, 1, 2, 1, 'Samsung Galaxy S26 Ultra 5G', 'SM-S948B/DS', 'Samsung ultimate 2026 flagship with Qualcomm Snapdragon 8 Gen 5 for Galaxy (3nm), 200MP Quad ISOCELL camera with 100x AI Space Zoom, integrated S-Pen, Anti-Reflective Armor Glass, and Galaxy AI 3.0.', 139999.00, 9, 127399.00, 50, 8, '16GB LPDDR5X', '512GB UFS 4.1', 'Qualcomm Snapdragon 8 Gen 5 (3nm)', '6.8" QHD+ Dynamic LTPO AMOLED 2X (1-144Hz, 3200 nits)', '200MP OIS + 50MP Periscope 10x + 50MP Tele 3x + 50MP Ultra-Wide', '5500mAh 65W Fast Charging', 'One UI 8.5 (Android 17)', 'Titanium Gray Armor', '1 Year Manufacturer Warranty', 'assets/images/products/s26_ultra_gray.png', 'ACTIVE', 1, 1, 4.92),
-(6, 1, 2, 1, 'Samsung Galaxy S26+ 5G', 'SM-S946B/DS', 'High-performance flagship with 6.7-inch QHD+ Dynamic AMOLED 2X, Snapdragon 8 Gen 5, Armor Aluminum 3.0, 50MP triple camera, and 4900mAh battery.', 99999.00, 10, 89999.00, 45, 5, '12GB LPDDR5X', '256GB UFS 4.0', 'Qualcomm Snapdragon 8 Gen 5', '6.7" Dynamic AMOLED 2X 120Hz', '50MP OIS Dual Pixel + 50MP Ultra-Wide + 12MP Telephoto 3x', '4900mAh 45W Fast Charging', 'One UI 8.5 (Android 17)', 'Onyx Black', '1 Year Manufacturer Warranty', 'assets/images/products/s26_plus_black.jpg', 'ACTIVE', 0, 0, 4.7),
-(7, 1, 2, 1, 'Samsung Galaxy S26 5G', 'SM-S941B/DS', 'Ergonomic compact flagship phone with Snapdragon 8 Gen 5, 6.2-inch flat Dynamic AMOLED 2X display, IP68 water resistance, and full suite of Galaxy AI features.', 79999.00, 12, 70399.00, 60, 10, '12GB LPDDR5X', '256GB UFS 4.0', 'Qualcomm Snapdragon 8 Gen 5', '6.2" Dynamic AMOLED 2X 120Hz', '50MP Main OIS + 12MP Ultra-Wide + 10MP Telephoto 3x', '4200mAh 30W Fast Charging', 'One UI 8.5 (Android 17)', 'Amber Yellow', '1 Year Manufacturer Warranty', 'assets/images/products/s26_base_amber.jpg', 'ACTIVE', 0, 1, 4.68),
-(8, 1, 2, 4, 'Samsung Galaxy Z Fold 8 5G', 'SM-F966B/DS', 'Ultra-slim foldable phone with 7.8-inch QXGA+ Infinity Flex screen, zero-gap Titanium Armor hinge, Under-Display camera, and enhanced S-Pen multitasking.', 174999.00, 8, 160999.00, 25, 4, '16GB LPDDR5X', '512GB UFS 4.1', 'Qualcomm Snapdragon 8 Gen 5', '7.8" Foldable Dynamic AMOLED 2X 120Hz + 6.4" Outer Cover', '50MP OIS + 12MP Telephoto 3x + 12MP Ultra-Wide', '5000mAh 65W Fast Charging', 'One UI 8.5 on Android 17', 'Phantom Silver Flex', '1 Year Manufacturer Warranty', 'assets/images/products/z_fold8_silver.jpg', 'ACTIVE', 1, 0, 4.9),
-(9, 1, 3, 6, 'Google Pixel 11 Pro 5G', 'G8V4C', 'Google AI photography powerhouse powered by Google Tensor G6 Titan M3 AI chip, 50MP Quad-PD camera with 30x Super Res Zoom, Pro Controls, and 7 years of OS updates.', 112999.00, 15, 96049.00, 35, 5, '16GB LPDDR5X', '256GB UFS 4.0', 'Google Tensor G6 AI Engine', '6.8" Super Actua OLED (1-144Hz, 3000 nits)', '50MP Main OIS + 48MP 5x Telephoto + 48MP Ultra-Wide Macro', '5300mAh 45W Fast Charging', 'Android 17 Stock Pixel Experience', 'Bay Coral Blue', '1 Year Manufacturer Warranty', 'assets/images/products/pixel11_pro_bay.svg', 'ACTIVE', 1, 1, 4.82),
-(10, 1, 4, 1, 'OnePlus 15 5G', 'CPH2701', 'OnePlus flagship with 4th Gen Hasselblad Camera for Mobile, Snapdragon 8 Gen 5, 6.82-inch 2K 144Hz ProXDR screen, Dual Cryo-Velocity VC cooling, and massive 6000mAh Glacier battery.', 74999.00, 8, 68999.00, 65, 10, '16GB LPDDR5X', '512GB UFS 4.0', 'Qualcomm Snapdragon 8 Gen 5', '6.82" 2K 144Hz ProXDR LTPO AMOLED', '50MP Sony LYT-808 OIS + 64MP Periscope 3x + 48MP Ultra-Wide', '6000mAh 120W SuperVOOC', 'OxygenOS 17 (Android 17)', 'Emerald Flow Silk', '1 Year Manufacturer Warranty', 'assets/images/products/oneplus15_silver.jpg', 'ACTIVE', 1, 1, 4.85),
-(11, 1, 5, 6, 'Xiaomi 16 Ultra 5G', '26030PN60G', 'Pinnacle of mobile optics co-engineered with Leica, featuring four 50MP sensors, 1-inch Sony LYT-1000 main sensor with stepless variable aperture, and dual periscope telephotos.', 104999.00, 11, 93449.00, 30, 5, '16GB LPDDR5X', '512GB UFS 4.1', 'Qualcomm Snapdragon 8 Gen 5', '6.73" WQHD+ 144Hz C9 AMOLED (3200 nits)', '50MP 1-inch Stepless OIS + 50MP 3.2x Tele + 50MP 5x Periscope + 50MP Ultra-Wide', '5800mAh 120W HyperCharge', 'Xiaomi HyperOS 3.0', 'Ceramic White Armor', '1 Year Manufacturer Warranty', 'assets/images/products/xiaomi16_white.jpg', 'ACTIVE', 0, 1, 4.87),
-(12, 1, 7, 6, 'Vivo X200 Pro 5G', 'V2501A', 'Professional camera flagship featuring ZEISS 200MP APO Telephoto camera, MediaTek Dimensity 9500 3nm platform, dedicated Vivo V4 imaging chip, and 6000mAh BlueVolt battery.', 94999.00, 10, 85499.00, 40, 6, '16GB LPDDR5X', '512GB UFS 4.0', 'MediaTek Dimensity 9500 (3nm) + V4 Chip', '6.78" 1.5K LTPO AMOLED 120Hz', '50MP Sony LYT-818 1/1.28" OIS + 200MP ZEISS APO Telephoto + 50MP Ultra-Wide', '6000mAh 100W FlashCharge', 'Funtouch OS 17 (Android 17)', 'Ocean Blue Sunburst', '1 Year Manufacturer Warranty', 'assets/images/products/vivo_x200_blue.png', 'ACTIVE', 0, 1, 4.89),
-(13, 1, 9, 2, 'Nothing Phone (4) 5G', 'A075', 'Transparent iconic design with Matrix Glyph Interface v4, Snapdragon 8s Gen 5, dual 50MP flagship sensors, and clean bloatware-free Nothing OS 3.5.', 47999.00, 15, 40799.00, 55, 8, '12GB LPDDR5X', '256GB UFS 4.0', 'Qualcomm Snapdragon 8s Gen 5', '6.7" Flexible OLED 120Hz (2500 nits)', '50MP Sony IMX906 OIS + 50MP Samsung JN1 Ultra-Wide', '5200mAh 65W Fast Charging', 'Nothing OS 3.5 (Android 17)', 'Transparent Dark Glyph', '1 Year Manufacturer Warranty', 'assets/images/products/nothing4_dark.png', 'ACTIVE', 0, 1, 4.72),
-(14, 1, 10, 5, 'iQOO 14 Pro 5G', 'I2501', 'Hardcore e-sports gaming phone with Snapdragon 8 Gen 5 and Supercomputing Q3 chip, 144Hz 2K Samsung E8 AMOLED, Monster Halo lighting, and 150W ultra-fast charging.', 62999.00, 14, 54179.00, 45, 8, '16GB LPDDR5X', '512GB UFS 4.1', 'Qualcomm Snapdragon 8 Gen 5 + Q3 Chip', '6.78" 2K 144Hz E8 AMOLED Display', '50MP VCS Bionic OIS + 50MP Periscope 3x + 50MP Ultra-Wide', '6000mAh 150W FlashCharge', 'OriginOS 17 (Android 17)', 'BMW M Legend White', '1 Year Manufacturer Warranty', 'assets/images/products/iqoo14_legend.jpg', 'ACTIVE', 0, 0, 4.81),
-(15, 1, 6, 5, 'Realme GT 8 Pro 5G', 'RMX4100', 'Performance flagship with Snapdragon 8 Gen 5, Eco² OLED display, 6500mAh Titan battery with 120W SuperVOOC charging, and Sony periscope telephoto lens.', 44999.00, 12, 39599.00, 70, 10, '16GB LPDDR5X', '512GB UFS 4.0', 'Qualcomm Snapdragon 8 Gen 5', '6.78" 1.5K 144Hz 8T LTPO Eco² OLED', '50MP Sony IMX906 OIS + 50MP Periscope 3x + 8MP Ultra-Wide', '6500mAh 120W SuperVOOC', 'Realme UI 7.0 (Android 17)', 'Mars Blue Vegan', '1 Year Manufacturer Warranty', 'assets/images/products/realme_gt8_blue.jpg', 'ACTIVE', 0, 1, 4.76),
-(16, 1, 8, 1, 'Motorola Edge 70 Ultra 5G', 'XT2601-2', 'Luxury curved smartphone with Snapdragon 8 Gen 5, 165Hz pOLED display, Pantone-validated cameras with 3x periscope telephoto, real vegan leather back, and 125W TurboPower.', 69999.00, 16, 58799.00, 40, 6, '16GB LPDDR5X', '512GB UFS 4.0', 'Qualcomm Snapdragon 8 Gen 5', '6.7" Super HD 165Hz Curved pOLED', '50MP OIS + 64MP Periscope 3x + 50MP Ultra-Wide Macro', '5000mAh 125W TurboPower', 'Hello UI (Android 17)', 'Peach Fuzz Vegan Leather', '1 Year Manufacturer Warranty', 'assets/images/products/moto_edge70_ultra.jpg', 'ACTIVE', 0, 0, 4.7),
-(17, 1, 2, 2, 'Samsung Galaxy A57 5G', 'SM-A576B/DS', 'Best-selling premium mid-ranger with Exynos 1680 (4nm), 6.6-inch Super AMOLED 120Hz display with Gorilla Glass Armor, 50MP OIS camera, IP67 rating, and Knox Vault security.', 39999.00, 15, 33999.00, 85, 15, '8GB LPDDR5X', '256GB UFS 3.1', 'Samsung Exynos 1680 (4nm)', '6.6" FHD+ Super AMOLED 120Hz', '50MP Main OIS + 12MP Ultra-Wide + 5MP Macro', '5000mAh 45W Fast Charging', 'One UI 8.5 (Android 17)', 'Awesome Lilac', '1 Year Manufacturer Warranty', 'assets/images/products/galaxy_a57_lilac.jpg', 'ACTIVE', 0, 1, 4.62),
-(18, 1, 5, 3, 'Redmi Note 15 Pro+ 5G', '26021PN30I', 'Feature-packed budget champion with 200MP OIS Ultra-Clear camera, MediaTek Dimensity 7400-Ultra, IP68 water resistance, and 120W HyperCharge in a slim curved body.', 32999.00, 18, 27059.00, 90, 15, '12GB LPDDR5X', '256GB UFS 3.1', 'MediaTek Dimensity 7400-Ultra (4nm)', '6.67" 1.5K 120Hz Curved AMOLED', '200MP Samsung ISOCELL HP3 OIS + 8MP Ultra-Wide', '5500mAh 120W HyperCharge', 'Xiaomi HyperOS 3.0', 'Aurora Purple', '1 Year Manufacturer Warranty', 'assets/images/products/redmi_note15_purple.jpg', 'ACTIVE', 0, 0, 4.6);
+INSERT INTO `products` (`product_id`, `supplier_id`, `brand_id`, `category_id`, `product_name`, `model`, `description`, `price`, `discount`, `final_price`, `stock_quantity`, `minimum_stock`, `ram`, `storage`, `processor`, `display`, `camera`, `battery`, `operating_system`, `color`, `warranty`, `image`, `status`, `is_featured`, `is_trending`, `rating`, `reviews_count`) VALUES
+(1, 1, 2, 1, 'Apple iPhone 18 Pro Max', 'A3290', 'Apple 2026 flagship with revolutionary TSMC 2nm A20 Pro Bionic silicon, Grade 5 Aerospace Titanium chassis, 48MP Fusion Triple Camera with 10x Tetraprism optical zoom, 6.9-inch 120Hz ProMotion Super Retina XDR OLED, and iOS 20.', 169900.00, 6, 159706.00, 35, 5, '16GB Unified', '512GB NVMe', 'Apple A20 Pro 2nm Hexa-Core', '6.9" ProMotion Super Retina XDR OLED (1-120Hz, 3000 nits)', '48MP Triple Fusion + 48MP Ultra-Wide + 48MP 10x Tetraprism Telephoto', '4850mAh Qi3 MagSafe 45W', 'iOS 20', 'Natural Titanium Glass', '1 Year Apple International Warranty', 'assets/images/products/iphone18_promax_natural.png', 'ACTIVE', 1, 1, 0.00, 0),
+(2, 1, 2, 6, 'Apple iPhone Duo (Foldable)', 'A3300-DUO', 'Revolutionary Apple foldable smartphone featuring dual seamless Ceramic Ultra-Thin Glass displays, Titanium Flex Hinge, A20 Pro chip, Spatial Video 8K recording, and dual MagSafe induction.', 199900.00, 5, 189905.00, 20, 3, '16GB Unified', '1TB NVMe', 'Apple A20 Pro 2nm Bionic', '8.1" Inner Foldable Ceramic OLED 120Hz + 6.3" Outer Cover Display', 'Dual 48MP Fusion Photonic Engine + 12MP TrueDepth FaceID', '5200mAh Dual-Cell MagSafe 50W', 'iOS 20 Fold Edition', 'Titanium Silver Flex', '1 Year AppleCare+ Included', 'assets/images/products/iphone_duo_open.jpg', 'ACTIVE', 1, 1, 0.00, 0),
+(3, 1, 2, 1, 'Apple iPhone 18 Pro', 'A3288', 'Compact pro powerhouse with A20 Pro silicon, 6.3-inch borderless ProMotion OLED, 48MP triple camera system with 5x optical zoom, and iOS 20.', 139900.00, 7, 130107.00, 40, 5, '12GB Unified', '256GB NVMe', 'Apple A20 Pro 2nm', '6.3" Super Retina XDR OLED 120Hz', '48MP Main + 48MP Ultra-Wide + 48MP 5x Telephoto', '4200mAh MagSafe 35W', 'iOS 20', 'Desert Titanium', '1 Year Apple International Warranty', 'assets/images/products/iphone18_pro_desert.png', 'ACTIVE', 1, 0, 0.00, 0),
+(4, 1, 2, 1, 'Apple iPhone 18', 'A3280', 'Dynamic Island, A20 Bionic chip, 48MP dual fusion camera with 2x sensor zoom, vibrant aerospace aluminum and color-infused back glass.', 84900.00, 10, 76410.00, 65, 10, '8GB Unified', '128GB NVMe', 'Apple A20 Bionic 3nm', '6.1" Super Retina XDR OLED 120Hz', '48MP Main Fusion + 12MP Ultra-Wide', '3800mAh Fast Charging 30W', 'iOS 20', 'Ultramarine Blue', '1 Year Apple Warranty', 'assets/images/products/iphone18_ultramarine.png', 'ACTIVE', 0, 1, 0.00, 0),
+(5, 2, 1, 1, 'Samsung Galaxy S26 Ultra 5G', 'SM-S948B/DS', 'The ultimate Samsung AI powerhouse featuring Snapdragon 8 Gen 5 for Galaxy, 200MP Quad Zoom Camera with ISOCELL HP3+ sensor, embedded S-Pen, and Titanium Armor frame.', 139999.00, 9, 127399.00, 45, 8, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 Ultra (3nm TSMC)', '6.8" Dynamic AMOLED 2X QHD+ (1-120Hz, Anti-Reflective 3200 nits)', '200MP Main + 50MP 5x Periscope + 50MP 3x Telephoto + 50MP Ultra-Wide', '5500mAh 65W Super Fast Charge 2.0', 'One UI 8 (Android 16)', 'Titanium Gray Armor', '1 Year Samsung India On-Site Warranty', 'assets/images/products/s26_ultra_gray.png', 'ACTIVE', 1, 1, 0.00, 0),
+(6, 2, 1, 1, 'Samsung Galaxy S26+ 5G', 'SM-S946B/DS', 'Balanced large screen flagship with 6.7" QHD+ Dynamic AMOLED 2X, Snapdragon 8 Gen 5, Armor Aluminum frame, and ProVisual AI engine.', 99999.00, 10, 89999.00, 35, 6, '12GB LPDDR5X', '256GB UFS 4.1', 'Snapdragon 8 Gen 5 for Galaxy', '6.7" Dynamic AMOLED 2X 120Hz', '50MP Dual-Pixel OIS + 12MP Ultra-Wide + 10MP 3x Telephoto', '4900mAh 45W Fast Charging', 'One UI 8 (Android 16)', 'Onyx Black', '1 Year Samsung India Warranty', 'assets/images/products/s26_plus_black.jpg', 'ACTIVE', 0, 1, 0.00, 0),
+(7, 2, 1, 1, 'Samsung Galaxy S26 5G', 'SM-S941B/DS', 'Compact premium flagship with 6.2-inch 120Hz Dynamic AMOLED 2X, flagship Snapdragon 8 Gen 5, and next-gen Galaxy AI productivity.', 79999.00, 12, 70399.00, 50, 8, '12GB LPDDR5X', '256GB UFS 4.1', 'Snapdragon 8 Gen 5 for Galaxy', '6.2" Dynamic AMOLED 2X FHD+ 120Hz', '50MP Main OIS + 12MP Ultra-Wide + 10MP 3x Telephoto', '4000mAh 25W Fast Charging', 'One UI 8 (Android 16)', 'Amber Yellow', '1 Year Samsung India Warranty', 'assets/images/products/s26_base_amber.jpg', 'ACTIVE', 0, 0, 0.00, 0),
+(8, 2, 1, 6, 'Samsung Galaxy Z Fold 8 5G', 'SM-F966B/DS', 'Ultra-refined foldable tablet-phone with zero-gap titanium hinge, IP48 water/dust resistance, 7.6-inch Dynamic AMOLED 2X main display with S-Pen support, and Snapdragon 8 Gen 5.', 174999.00, 8, 160999.00, 22, 4, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 Ultra 3nm', '7.6" Inner Dynamic AMOLED 2X (120Hz) + 6.3" Cover AMOLED (120Hz)', '50MP Dual Pixel OIS + 12MP Ultra-Wide + 10MP 3x Periscope', '4600mAh 45W Dual Cell Fast Charging', 'One UI 8 Fold Edition (Android 16)', 'Phantom Silver Flex', '1 Year Samsung Premier Care + 1 Screen Replacement', 'assets/images/products/z_fold8_silver.jpg', 'ACTIVE', 1, 1, 0.00, 0),
+(9, 3, 9, 3, 'Google Pixel 11 Pro 5G', 'GC-P11P', 'The standard of computational photography with Google Tensor G6 custom TPU, 50MP Sony LYT-900 1-inch main sensor, Gemini 2.0 on-device multimodal AI, and 7 years of Android OS updates.', 112999.00, 15, 96049.00, 30, 5, '16GB LPDDR5X', '256GB UFS 4.1', 'Google Tensor G6 2nm with Titan M3 Security', '6.7" Super Actua OLED (1-120Hz, 3100 nits peak)', '50MP 1-inch Octa-PD + 48MP Quad PD Ultra-Wide + 48MP 5x Optical Periscope', '5100mAh Fast Charging 45W', 'Stock Android 16', 'Bay Coral Blue', '1 Year Google India Warranty', 'assets/images/products/pixel11_pro_obsidian.jpg', 'ACTIVE', 1, 1, 0.00, 0),
+(10, 4, 3, 1, 'OnePlus 15 5G', 'CPH2621', 'Fast and Smooth 2026 flagship with Snapdragon 8 Gen 5, 5th Gen Hasselblad Mobile Camera system with HyperTone Engine, 100W SUPERVOOC flash charge, and OxygenOS 16.', 74999.00, 8, 68999.00, 45, 6, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 Octa-Core 3nm', '6.82" 2K ProXDR LTPO AMOLED (1-120Hz, Dolby Vision)', '50MP Sony LYT-808 OIS + 64MP 3x Periscope Telephoto + 48MP Ultra-Wide', '5600mAh Silicon-Carbon Dual-Cell 100W SUPERVOOC', 'OxygenOS 16 (Android 16)', 'Emerald Flow Silk', '1 Year OnePlus Comprehensive Warranty', 'assets/images/products/oneplus15_silver.jpg', 'ACTIVE', 1, 1, 0.00, 0),
+(11, 5, 4, 3, 'Xiaomi 16 Ultra 5G', '26048PN5CG', 'Leica Quad Camera imaging beast with 1-inch variable aperture main sensor, dual periscope zoom lenses, ceramic body armor, and Snapdragon 8 Gen 5.', 104999.00, 11, 93449.00, 25, 4, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 Flagship', '6.73" WQHD+ AMOLED 120Hz LTPO (3000 nits)', 'Leica Quad: 50MP 1-inch Variable Aperture + 50MP 3.2x Tele + 50MP 5x Periscope + 50MP Ultra-Wide', '5300mAh 90W HyperCharge + 80W Wireless', 'Xiaomi HyperOS 3 (Android 16)', 'Ceramic White Armor', '1 Year Xiaomi India Priority Warranty', 'assets/images/products/xiaomi16_white.jpg', 'ACTIVE', 1, 0, 0.00, 0),
+(12, 6, 6, 3, 'Vivo X200 Pro 5G', 'V2413A', 'Zeiss co-engineered portrait flagship with 200MP Zeiss APO Telephoto camera, MediaTek Dimensity 9500 3nm silicon, Vivo V4 imaging chip, and Armor Glass protection.', 94999.00, 10, 85499.00, 30, 5, '16GB LPDDR5X', '512GB UFS 4.1', 'MediaTek Dimensity 9500 3nm Flagship', '6.78" 1.5K 8T LTPO AMOLED 120Hz (3000 nits)', '50MP Sony LYT-818 1/1.28" + 200MP Zeiss APO Telephoto + 50MP Ultra-Wide', '6000mAh BlueVolt 90W FlashCharge', 'Funtouch OS 16 (Android 16)', 'Ocean Blue Sunburst', '1 Year Vivo India Warranty', 'assets/images/products/vivo_x200_blue.png', 'ACTIVE', 0, 1, 0.00, 0),
+(13, 9, 5, 5, 'Nothing Phone (4) 5G', 'AIN088', 'Transparent aesthetic smartphone with next-generation interactive Glyph Matrix LED interface, Snapdragon 7+ Gen 4, clean bloatware-free Nothing OS 3.5, and dual 50MP Sony cameras.', 47999.00, 15, 40799.00, 60, 10, '12GB LPDDR5X', '256GB UFS 4.0', 'Snapdragon 7+ Gen 4 Octa-Core', '6.7" Flexible OLED 120Hz Adaptive (1600 nits)', '50MP Sony Main OIS + 50MP Ultra-Wide Macro', '5000mAh 65W Fast Charging + 15W Wireless', 'Nothing OS 3.5 (Android 16)', 'Transparent Dark Glyph', '1 Year Nothing Warranty', 'assets/images/products/nothing4_dark.png', 'ACTIVE', 0, 1, 0.00, 0),
+(14, 10, 10, 4, 'iQOO 14 Pro 5G', 'I2401', 'Pure gaming and benchmark dominator with Snapdragon 8 Gen 5, Q3 dedicated supercomputing gaming chip, 2K 144Hz Samsung E8 AMOLED, and 120W FlashCharge.', 62999.00, 14, 54179.00, 40, 8, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 + Q3 Supercomputing Gaming Chip', '6.78" 2K 144Hz E8 AMOLED with 3000Hz Instant Touch', '50MP VCS Bionic OIS + 50MP Ultra-Wide + 64MP 3x Periscope', '5400mAh 120W Ultra FlashCharge', 'Funtouch OS 16 (Android 16)', 'BMW M Legend White', '1 Year iQOO India Warranty', 'assets/images/products/iqoo15_legend.png', 'ACTIVE', 0, 1, 0.00, 0),
+(15, 7, 7, 4, 'Realme GT 8 Pro 5G', 'RMX4001', 'Speed-inspired performance champion with Snapdragon 8 Gen 5, Iceberg 10,000mm2 VC vapor cooling chamber, 144Hz AMOLED, and vegan leather luxury styling.', 44999.00, 12, 39599.00, 55, 8, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 Octa-Core', '6.78" 1.5K 144Hz 8T LTPO AMOLED (4000 nits)', '50MP Sony IMX890 OIS + 50MP Periscope Telephoto + 8MP Ultra-Wide', '5800mAh 120W Ultra-Charge', 'Realme UI 7 (Android 16)', 'Mars Blue Vegan', '1 Year Realme India Warranty', 'assets/images/products/realme_gt8_blue.jpg', 'ACTIVE', 0, 0, 0.00, 0),
+(16, 8, 8, 1, 'Motorola Edge 70 Ultra 5G', 'XT2501-1', 'Pantone validated design with Snapdragon 8 Gen 5, 165Hz borderless quad-curved pOLED display, 50MP triple optical camera with AI Action Shot, and 125W TurboPower.', 69999.00, 16, 58799.00, 35, 5, '16GB LPDDR5X', '512GB UFS 4.1', 'Snapdragon 8 Gen 5 3nm TSMC', '6.7" 1.5K 165Hz Quad-Curved pOLED HDR10+', '50MP Main OIS + 50MP Ultra-Wide Macro + 64MP 3x Periscope', '5000mAh 125W TurboPower + 50W Wireless', 'Hello UI (Android 16)', 'Peach Fuzz Vegan Leather', '1 Year Motorola India Warranty', 'assets/images/products/moto_edge70_ultra.jpg', 'ACTIVE', 0, 0, 0.00, 0),
+(17, 2, 1, 5, 'Samsung Galaxy A57 5G', 'SM-A576B/DS', 'Premium mid-range standard with metal chassis, IP67 water resistance, Exynos 1580 processor, 50MP OIS main camera with 4K selfie video, and 5 years of security updates.', 39999.00, 15, 33999.00, 80, 12, '8GB LPDDR5X', '256GB UFS 3.1', 'Samsung Exynos 1580 4nm Octa-Core', '6.6" Super AMOLED+ 120Hz FHD+ (1500 nits)', '50MP Main OIS + 12MP Ultra-Wide + 5MP Macro', '5000mAh 45W Fast Charging', 'One UI 8 (Android 16)', 'Awesome Lilac', '1 Year Samsung India Warranty', 'assets/images/products/galaxy_a57_lilac.jpg', 'ACTIVE', 0, 1, 0.00, 0),
+(18, 11, 11, 5, 'Redmi Note 15 Pro+ 5G', '26090RN7CG', 'The undisputed value camera leader featuring 200MP OIS camera with 4x in-sensor lossless zoom, MediaTek Dimensity 8400-Ultra, curved 1.5K AMOLED, and 120W HyperCharge.', 32999.00, 18, 27059.00, 90, 15, '12GB LPDDR5X', '256GB UFS 3.1', 'MediaTek Dimensity 8400-Ultra 4nm', '6.67" 1.5K Curved AMOLED 120Hz HDR10+ (1800 nits)', '200MP Samsung ISOCELL HP3 OIS + 8MP Ultra-Wide + 2MP Macro', '5100mAh 120W HyperCharge', 'Xiaomi HyperOS 3 (Android 16)', 'Aurora Purple', '1 Year Redmi India Warranty', 'assets/images/products/redmi_note15_purple.jpg', 'ACTIVE', 0, 1, 0.00, 0);
+
+
+-- Seed Product Categories Many-to-Many
+INSERT INTO `product_categories` (`product_id`, `category_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 6),
+(2, 1),
+(2, 2),
+(3, 1),
+(3, 2),
+(3, 3),
+(4, 1),
+(4, 2),
+(5, 1),
+(5, 2),
+(5, 3),
+(6, 1),
+(6, 2),
+(7, 1),
+(7, 2),
+(8, 6),
+(8, 1),
+(8, 2),
+(9, 3),
+(9, 1),
+(9, 2),
+(10, 1),
+(10, 2),
+(10, 4),
+(11, 3),
+(11, 1),
+(11, 2),
+(12, 3),
+(12, 1),
+(12, 2),
+(13, 5),
+(13, 2),
+(14, 4),
+(14, 1),
+(14, 2),
+(15, 4),
+(15, 1),
+(15, 2),
+(16, 1),
+(16, 2),
+(17, 5),
+(17, 2),
+(18, 5),
+(18, 3),
+(18, 2);
+
+-- Seed Product Variants
+INSERT INTO `product_variants` (`product_id`, `sku`, `ram`, `storage`, `color`, `color_hex`, `image_url`, `price`, `discount`, `final_price`, `stock_quantity`, `is_default`) VALUES
+(1, 'IP18PM-512-NAT', '16GB Unified', '512GB NVMe', 'Natural Titanium Glass', '#9c968f', 'assets/images/products/iphone18_promax_natural.png', 169900.00, 6, 159706.00, 35, 1),
+(1, 'IP18PM-256-DES', '16GB Unified', '256GB NVMe', 'Desert Titanium', '#c4a58b', 'assets/images/products/iphone18_promax_desert.png', 154900.00, 6, 145606.00, 25, 0),
+(1, 'IP18PM-1TB-WHT', '16GB Unified', '1TB NVMe', 'White Titanium', '#e3e4e5', 'assets/images/products/iphone18_promax_white.png', 189900.00, 5, 180405.00, 15, 0),
+(1, 'IP18PM-512-BLK', '16GB Unified', '512GB NVMe', 'Black Titanium', '#343538', 'assets/images/products/iphone18_promax_black.png', 169900.00, 6, 159706.00, 30, 0),
+(2, 'IPDUO-1TB-SLV', '16GB Unified', '1TB NVMe', 'Titanium Silver Flex', '#c0c0c0', 'assets/images/products/iphone_duo_open.jpg', 199900.00, 5, 189905.00, 20, 1),
+(2, 'IPDUO-512-BLK', '16GB Unified', '512GB NVMe', 'Space Black Duo', '#1c1c1e', 'assets/images/products/iphone_duo_black.jpg', 184900.00, 5, 175655.00, 15, 0),
+(3, 'IP18P-256-DES', '12GB Unified', '256GB NVMe', 'Desert Titanium', '#c4a58b', 'assets/images/products/iphone18_pro_desert.png', 139900.00, 7, 130107.00, 40, 1),
+(3, 'IP18P-512-NAT', '12GB Unified', '512GB NVMe', 'Natural Titanium', '#9c968f', 'assets/images/products/iphone18_pro_natural.png', 154900.00, 6, 145606.00, 25, 0),
+(3, 'IP18P-256-BLK', '12GB Unified', '256GB NVMe', 'Black Titanium', '#343538', 'assets/images/products/iphone18_pro_black.png', 139900.00, 7, 130107.00, 30, 0),
+(4, 'IP18-128-BLU', '8GB Unified', '128GB NVMe', 'Ultramarine Blue', '#39538c', 'assets/images/products/iphone18_ultramarine.png', 84900.00, 10, 76410.00, 65, 1),
+(4, 'IP18-256-TEA', '8GB Unified', '256GB NVMe', 'Teal Green', '#619597', 'assets/images/products/iphone18_teal.png', 94900.00, 9, 86359.00, 45, 0),
+(4, 'IP18-128-PNK', '8GB Unified', '128GB NVMe', 'Pink Blossom', '#d68d9b', 'assets/images/products/iphone18_pink.png', 84900.00, 10, 76410.00, 35, 0),
+(4, 'IP18-256-BLK', '8GB Unified', '256GB NVMe', 'Midnight Black', '#2c2d30', 'assets/images/products/iphone18_black.png', 94900.00, 9, 86359.00, 40, 0),
+(5, 'S26U-512-GRY', '16GB LPDDR5X', '512GB UFS 4.1', 'Titanium Gray Armor', '#73726e', 'assets/images/products/s26_ultra_gray.png', 139999.00, 9, 127399.00, 45, 1),
+(5, 'S26U-256-BLK', '12GB LPDDR5X', '256GB UFS 4.1', 'Titanium Black', '#2b2b2b', 'assets/images/products/s26_ultra_black.jpg', 129999.00, 10, 116999.00, 35, 0),
+(5, 'S26U-1TB-VIO', '16GB LPDDR5X', '1TB UFS 4.1', 'Titanium Violet', '#443a57', 'assets/images/products/s26_ultra_violet.jpg', 159999.00, 8, 147199.00, 20, 0),
+(5, 'S26U-512-YEL', '16GB LPDDR5X', '512GB UFS 4.1', 'Titanium Yellow', '#e4d9b9', 'assets/images/products/s26_ultra_yellow.png', 139999.00, 9, 127399.00, 25, 0),
+(6, 'S26P-256-BLK', '12GB LPDDR5X', '256GB UFS 4.1', 'Onyx Black', '#222222', 'assets/images/products/s26_plus_black.jpg', 99999.00, 10, 89999.00, 35, 1),
+(6, 'S26P-512-COB', '12GB LPDDR5X', '512GB UFS 4.1', 'Cobalt Violet', '#433f5c', 'assets/images/products/s26_cobalt.jpg', 109999.00, 9, 100099.00, 25, 0),
+(7, 'S26-256-AMB', '12GB LPDDR5X', '256GB UFS 4.1', 'Amber Yellow', '#f1d899', 'assets/images/products/s26_base_amber.jpg', 79999.00, 12, 70399.00, 50, 1),
+(7, 'S26-128-COB', '8GB LPDDR5X', '128GB UFS 4.1', 'Cobalt Violet', '#433f5c', 'assets/images/products/s26_cobalt.jpg', 74999.00, 11, 66749.00, 30, 0),
+(8, 'ZFD8-512-SLV', '16GB LPDDR5X', '512GB UFS 4.1', 'Phantom Silver Flex', '#d4d5d9', 'assets/images/products/z_fold8_silver.jpg', 174999.00, 8, 160999.00, 22, 1),
+(8, 'ZFD8-1TB-BLK', '16GB LPDDR5X', '1TB UFS 4.1', 'Jet Black Flex', '#1a1a1a', 'assets/images/products/z_fold8_black.jpg', 194999.00, 7, 181349.00, 15, 0),
+(9, 'PX11P-256-BAY', '16GB LPDDR5X', '256GB UFS 4.1', 'Bay Coral Blue', '#789dc7', 'assets/images/products/pixel11_pro_obsidian.jpg', 112999.00, 15, 96049.00, 30, 1),
+(9, 'PX11P-512-OBS', '16GB LPDDR5X', '512GB UFS 4.1', 'Obsidian Black', '#2c2d30', 'assets/images/products/pixel11_pro_obsidian.jpg', 124999.00, 14, 107499.00, 20, 0),
+(9, 'PX11P-256-POR', '16GB LPDDR5X', '256GB UFS 4.1', 'Porcelain White', '#eae6df', 'assets/images/products/pixel11_pro_front.jpg', 112999.00, 15, 96049.00, 25, 0),
+(10, 'OP15-512-SLV', '16GB LPDDR5X', '512GB UFS 4.1', 'Emerald Flow Silk', '#c4d1cd', 'assets/images/products/oneplus15_silver.jpg', 74999.00, 8, 68999.00, 45, 1),
+(10, 'OP15-256-BLK', '12GB LPDDR5X', '256GB UFS 4.1', 'Silky Black', '#1e1e1e', 'assets/images/products/oneplus15_black.jpg', 69999.00, 9, 63699.00, 35, 0),
+(11, 'XM16U-512-WHT', '16GB LPDDR5X', '512GB UFS 4.1', 'Ceramic White Armor', '#f5f5f5', 'assets/images/products/xiaomi16_white.jpg', 104999.00, 11, 93449.00, 25, 1),
+(11, 'XM16U-1TB-BLK', '16GB LPDDR5X', '1TB UFS 4.1', 'Titanium Black', '#222222', 'assets/images/products/xiaomi16_black.jpg', 119999.00, 10, 107999.00, 18, 0),
+(12, 'VX200P-512-BLU', '16GB LPDDR5X', '512GB UFS 4.1', 'Ocean Blue Sunburst', '#306699', 'assets/images/products/vivo_x200_blue.png', 94999.00, 10, 85499.00, 30, 1),
+(12, 'VX200P-256-PNK', '12GB LPDDR5X', '256GB UFS 4.1', 'Sunset Pink', '#e09fba', 'assets/images/products/vivo_x200_pink.png', 86999.00, 10, 78299.00, 20, 0),
+(13, 'NOTH4-256-DRK', '12GB LPDDR5X', '256GB UFS 4.0', 'Transparent Dark Glyph', '#262626', 'assets/images/products/nothing4_dark.png', 47999.00, 15, 40799.00, 60, 1),
+(13, 'NOTH4-512-WHT', '16GB LPDDR5X', '512GB UFS 4.0', 'White Glyph Edition', '#eaeaea', 'assets/images/products/nothing4_white.png', 54999.00, 13, 47849.00, 35, 0),
+(14, 'IQ14P-512-LEG', '16GB LPDDR5X', '512GB UFS 4.1', 'BMW M Legend White', '#efefef', 'assets/images/products/iqoo15_legend.png', 62999.00, 14, 54179.00, 40, 1),
+(14, 'IQ14P-256-BLK', '12GB LPDDR5X', '256GB UFS 4.1', 'Track Black', '#202020', 'assets/images/products/iqoo14_alpha.jpg', 56999.00, 14, 49019.00, 30, 0),
+(15, 'RGT8P-512-BLU', '16GB LPDDR5X', '512GB UFS 4.1', 'Mars Blue Vegan', '#285880', 'assets/images/products/realme_gt8_blue.jpg', 44999.00, 12, 39599.00, 55, 1),
+(15, 'RGT8P-256-WHT', '12GB LPDDR5X', '256GB UFS 4.1', 'White Speed Edition', '#f0f0f0', 'assets/images/products/realme_gt8_white.jpg', 39999.00, 13, 34799.00, 40, 0),
+(16, 'ME70U-512-PCH', '16GB LPDDR5X', '512GB UFS 4.1', 'Peach Fuzz Vegan Leather', '#f6c4a6', 'assets/images/products/moto_edge70_ultra.jpg', 69999.00, 16, 58799.00, 35, 1),
+(16, 'ME70U-256-BLK', '12GB LPDDR5X', '256GB UFS 4.1', 'Cosmic Black', '#202022', 'assets/images/products/moto_edge70_front.jpg', 62999.00, 15, 53549.00, 25, 0),
+(17, 'A57-256-LIL', '8GB LPDDR5X', '256GB UFS 3.1', 'Awesome Lilac', '#c8b9db', 'assets/images/products/galaxy_a57_lilac.jpg', 39999.00, 15, 33999.00, 80, 1),
+(17, 'A57-128-BLU', '8GB LPDDR5X', '128GB UFS 3.1', 'Awesome Ice Blue', '#adc5db', 'assets/images/products/galaxy_a57_blue.jpg', 34999.00, 14, 30099.00, 50, 0),
+(18, 'RN15P-256-PUR', '12GB LPDDR5X', '256GB UFS 3.1', 'Aurora Purple', '#786088', 'assets/images/products/redmi_note15_purple.jpg', 32999.00, 18, 27059.00, 90, 1),
+(18, 'RN15P-128-BLK', '8GB LPDDR5X', '128GB UFS 3.1', 'Midnight Black', '#1c1c1c', 'assets/images/products/redmi_note15_black.jpg', 28999.00, 17, 24069.00, 60, 0);
 
 -- Seed Initial Inventory Transactions
 INSERT INTO `inventory_transactions` (`product_id`, `transaction_type`, `quantity_change`, `quantity_after`, `reference_id`, `notes`, `created_by`) VALUES
@@ -558,9 +717,9 @@ INSERT INTO `product_images` (`product_id`, `image_url`, `color_name`, `color_he
 (7, 'assets/images/products/s26_cobalt.jpg', 'Cobalt Violet', '#433f5c', 0, 2),
 (8, 'assets/images/products/z_fold8_silver.jpg', 'Phantom Silver Flex', '#d4d5d9', 1, 1),
 (8, 'assets/images/products/z_fold8_black.jpg', 'Jet Black Flex', '#1a1a1a', 0, 2),
-(9, 'assets/images/products/pixel11_pro_bay.svg', 'Bay Coral Blue', '#789dc7', 1, 1),
-(9, 'assets/images/products/pixel11_pro_obsidian.svg', 'Obsidian Black', '#2c2d30', 0, 2),
-(9, 'assets/images/products/pixel11_pro_porcelain.svg', 'Porcelain White', '#eae6df', 0, 3),
+(9, 'assets/images/products/pixel11_pro_obsidian.jpg', 'Bay Coral Blue', '#789dc7', 1, 1),
+(9, 'assets/images/products/pixel11_pro_obsidian.jpg', 'Obsidian Black', '#2c2d30', 0, 2),
+(9, 'assets/images/products/pixel11_pro_front.jpg', 'Porcelain White', '#eae6df', 0, 3),
 (9, 'assets/images/products/pixel11_pro_mint.svg', 'Mint Green', '#c4e3d4', 0, 4),
 (10, 'assets/images/products/oneplus15_silver.jpg', 'Emerald Flow Silk', '#c4d1cd', 1, 1),
 (10, 'assets/images/products/oneplus15_black.jpg', 'Silky Black', '#1e1e1e', 0, 2),
@@ -570,7 +729,7 @@ INSERT INTO `product_images` (`product_id`, `image_url`, `color_name`, `color_he
 (12, 'assets/images/products/vivo_x200_pink.png', 'Sunset Pink', '#e09fba', 0, 2),
 (13, 'assets/images/products/nothing4_dark.png', 'Transparent Dark Glyph', '#262626', 1, 1),
 (13, 'assets/images/products/nothing4_white.png', 'White Glyph Edition', '#eaeaea', 0, 2),
-(14, 'assets/images/products/iqoo14_legend.jpg', 'BMW M Legend White', '#efefef', 1, 1),
+(14, 'assets/images/products/iqoo15_legend.png', 'BMW M Legend White', '#efefef', 1, 1),
 (14, 'assets/images/products/iqoo14_alpha.jpg', 'Track Black', '#202020', 0, 2),
 (15, 'assets/images/products/realme_gt8_blue.jpg', 'Mars Blue Vegan', '#285880', 1, 1),
 (15, 'assets/images/products/realme_gt8_white.jpg', 'White Speed Edition', '#f0f0f0', 0, 2),
