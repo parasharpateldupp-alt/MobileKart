@@ -55,7 +55,8 @@ function format_inr($amount, $showDecimals = true) {
         $formatted = $intPart;
     }
 
-    $result = CURRENCY_SYMBOL . ($negative ? '-' : '') . $formatted;
+    $sym = (defined('APP_CURRENCY_SYMBOL') && is_string(APP_CURRENCY_SYMBOL)) ? APP_CURRENCY_SYMBOL : '₹';
+    $result = $sym . ($negative ? '-' : '') . $formatted;
     if ($showDecimals) {
         $result .= '.' . $decPart;
     }

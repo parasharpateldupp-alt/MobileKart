@@ -12,7 +12,7 @@ if (!defined('APP_SHORT_NAME')) define('APP_SHORT_NAME', 'MobileKart Distributio
 if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
 // Currency & Taxes (Indian Rupees)
-if (!defined('CURRENCY_SYMBOL')) define('CURRENCY_SYMBOL', '₹');
+if (!defined('APP_CURRENCY_SYMBOL')) define('APP_CURRENCY_SYMBOL', '₹');
 if (!defined('CURRENCY_CODE')) define('CURRENCY_CODE', 'INR');
 if (!defined('DEFAULT_GST_PERCENT')) define('DEFAULT_GST_PERCENT', 18.0);
 if (!defined('FREE_SHIPPING_THRESHOLD')) define('FREE_SHIPPING_THRESHOLD', 5000.00);
