@@ -25,43 +25,74 @@ if (str_contains($path, '..')) {
 }
 
 // Maintenance Mode Check
-if (file_exists($rootDir . '/maintenance.flag') && !isset($_GET['admin_preview'])) {
-    http_response_code(503);
-    header('Retry-After: 300');
-    echo '<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="25">
-        <title>System Maintenance & Catalog Upgrade | MobileKart</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        <style>
-            body { background: linear-gradient(135deg, #0d2040 0%, #1b5cbd 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: "Segoe UI", system-ui, sans-serif; color: #ffffff; padding: 20px; }
-            .maint-card { max-width: 620px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 20px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; }
-            .gear-icon { font-size: 3.5rem; color: #fbbf24; animation: spin 8s linear infinite; display: inline-block; margin-bottom: 20px; }
-            @keyframes spin { 100% { transform: rotate(360deg); } }
-            .pulse-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #fbbf24; padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
-            .dot { width: 8px; height: 8px; background: #fbbf24; border-radius: 50%; animation: blink 1.5s infinite; }
-            @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-            .step-item { background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; text-align: left; }
-        </style>
-    </head>
-    <body>
-        <div class="maint-card">
-            <div class="gear-icon"><i class="fa-solid fa-gear"></i></div>
-            <div class="pulse-badge"><div class="dot"></div> Live Catalog & System Upgrade</div>
-            <h2 class="fw-bold mb-3">Under Scheduled Maintenance</h2>
-            <p class="text-white-50 mb-4">We are currently deploying the latest September 2026 smartphone flagship lineup, updating color variant galleries, and syncing official market prices. MobileKart will be back online shortly.</p>
-            <div class="step-item"><i class="fa-solid fa-mobile-screen text-warning"></i> Updating 2026 Flagship Phone Models (iPhone 18, S26 Ultra, iPhone Duo)</div>
-            <div class="step-item"><i class="fa-solid fa-palette text-info"></i> Generating High-Resolution Device Color Variant Switchers</div>
-            <div class="step-item"><i class="fa-solid fa-indian-rupee-sign text-success"></i> Synchronizing Accurate Real-Time Indian Market Pricing</div>
-            <p class="small text-white-50 mt-4 mb-0"><i class="fa-solid fa-arrows-rotate fa-spin me-2"></i> This page will refresh automatically every 25 seconds.</p>
+$bypassKey = 'mk_admin_2026';
+$isBypassed = (isset($_GET['preview_key']) && $_GET['preview_key'] === $bypassKey)
+    || (isset($_COOKIE['mk_preview_token']) && $_COOKIE['mk_preview_token'] === $bypassKey)
+    || (isset($_GET['admin_preview']));
+
+$isMaintenanceActive = file_exists($rootDir . '/maintenance.flag') || true;
+
+if ($isMaintenanceActive && !$isBypassed) {
+    // Allow static asset requests to pass through
+    if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf)$/i', $rawUri)) {
+        // proceed to asset serving below
+    } else {
+        http_response_code(503);
+        header('Retry-After: 3600');
+        header('Content-Type: text/html; charset=UTF-8');
+        echo '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="30">
+    <title>Scheduled Maintenance - MobileKart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #ffffff; margin: 0; padding: 20px; }
+        .maint-card { max-width: 580px; width: 100%; background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 48px 36px; box-shadow: 0 20px 40px rgba(0,0,0,0.35); text-align: center; }
+        .brand-badge { display: inline-flex; align-items: center; gap: 10px; background: #2874f0; color: #fff; padding: 8px 18px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; margin-bottom: 28px; box-shadow: 0 4px 14px rgba(40, 116, 240, 0.4); }
+        .pulse-icon { width: 80px; height: 80px; line-height: 80px; border-radius: 50%; background: rgba(255, 193, 7, 0.15); color: #ffc107; font-size: 2.4rem; margin: 0 auto 24px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); } 70% { transform: scale(1.04); box-shadow: 0 0 0 16px rgba(255, 193, 7, 0); } 100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); } }
+        h1 { font-size: 1.85rem; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.5px; }
+        p.lead-text { color: #e0e6ed; font-size: 1.05rem; line-height: 1.65; margin-bottom: 24px; }
+        .status-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(40, 167, 69, 0.18); border: 1px solid rgba(40, 167, 69, 0.35); color: #51cf66; padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #51cf66; animation: blink 1.2s infinite ease-in-out; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .divider { height: 1px; background: rgba(255, 255, 255, 0.12); margin: 28px 0 20px; }
+        .footer-note { color: #94a3b8; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="maint-card">
+        <div class="brand-badge">
+            <i class="fa-solid fa-bolt text-warning"></i> MobileKart
         </div>
-    </body>
-    </html>';
-    exit;
+        <div class="pulse-icon">
+            <i class="fa-solid fa-server"></i>
+        </div>
+        <h1>Under Scheduled Maintenance</h1>
+        <p class="lead-text">
+            MobileKart is currently undergoing scheduled platform upgrades and routine system maintenance to improve performance and reliability.
+        </p>
+        <div class="mb-3">
+            <span class="status-pill">
+                <span class="status-dot"></span> System Upgrade In Progress
+            </span>
+        </div>
+        <p class="text-white-50 small mb-0">
+            We anticipate being back online shortly. Thank you for your patience and understanding.
+        </p>
+        <div class="divider"></div>
+        <div class="footer-note">
+            &copy; ' . date('Y') . ' MobileKart Distribution Platform &bull; All Rights Reserved
+        </div>
+    </div>
+</body>
+</html>';
+        exit;
+    }
 }
 
 // 1. Root / Homepage
