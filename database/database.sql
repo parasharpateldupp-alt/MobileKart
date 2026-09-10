@@ -740,3 +740,49 @@ INSERT INTO `product_images` (`product_id`, `image_url`, `color_name`, `color_he
 (18, 'assets/images/products/redmi_note15_purple.jpg', 'Aurora Purple', '#786088', 1, 1),
 (18, 'assets/images/products/redmi_note15_black.jpg', 'Midnight Black', '#1c1c1c', 0, 2);
 UNLOCK TABLES;
+
+-- --------------------------------------------------------
+-- Table structure for table `product_images`
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `product_images`;
+CREATE TABLE `product_images` (
+  `image_id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `local_path` varchar(255) DEFAULT NULL,
+  `source_url` text DEFAULT NULL,
+  `source_name` varchar(100) DEFAULT NULL,
+  `license` varchar(100) DEFAULT NULL,
+  `author` varchar(100) DEFAULT NULL,
+  `attribution_text` text DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT 1,
+  `verified_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_primary` tinyint(1) DEFAULT 0,
+  `sort_order` int(11) DEFAULT 0,
+  `color_name` varchar(50) DEFAULT NULL,
+  `color_hex` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`image_id`),
+  KEY `idx_pi_product` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table `product_images`
+INSERT INTO `product_images` (`image_id`, `product_id`, `image_url`, `local_path`, `source_url`, `source_name`, `license`, `author`, `attribution_text`, `verified`, `is_primary`, `sort_order`, `color_name`, `color_hex`) VALUES
+(95, 1, 'assets/images/products/apple-iphone-18-pro-max.jpg', 'assets/images/products/apple-iphone-18-pro-max.jpg', 'https://www.apple.com/in/shop/buy-iphone', 'Apple Official Newsroom', 'Manufacturer copyrighted', 'Apple Inc.', 'Official product imagery courtesy of Apple Inc. All rights reserved.', 1, 1, 0, 'Natural Titanium', '#9c968f'),
+(96, 2, 'assets/images/products/apple-iphone-duo.jpg', 'assets/images/products/apple-iphone-duo.jpg', 'https://www.apple.com/in/shop/buy-iphone', 'Apple Official Newsroom', 'Manufacturer copyrighted', 'Apple Inc.', 'Official product imagery courtesy of Apple Inc. All rights reserved.', 1, 1, 0, 'Titanium Silver Flex', '#c0c0c0'),
+(97, 3, 'assets/images/products/apple-iphone-18-pro.jpg', 'assets/images/products/apple-iphone-18-pro.jpg', 'https://www.apple.com/in/shop/buy-iphone', 'Apple Official Newsroom', 'Manufacturer copyrighted', 'Apple Inc.', 'Official product imagery courtesy of Apple Inc. All rights reserved.', 1, 1, 0, 'Desert Titanium', '#c4a58b'),
+(98, 4, 'assets/images/products/apple-iphone-18.jpg', 'assets/images/products/apple-iphone-18.jpg', 'https://www.apple.com/in/shop/buy-iphone', 'Apple Official Newsroom', 'Manufacturer copyrighted', 'Apple Inc.', 'Official product imagery courtesy of Apple Inc. All rights reserved.', 1, 1, 0, 'Ultramarine Blue', '#39538c'),
+(99, 5, 'assets/images/products/samsung-galaxy-s26-ultra.jpg', 'assets/images/products/samsung-galaxy-s26-ultra.jpg', 'https://www.samsung.com/in/smartphones/galaxy-s26/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Titanium Gray Armor', '#73726e'),
+(100, 6, 'assets/images/products/samsung-galaxy-s26-plus.jpg', 'assets/images/products/samsung-galaxy-s26-plus.jpg', 'https://www.samsung.com/in/smartphones/galaxy-s26/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Onyx Black', '#222222'),
+(101, 7, 'assets/images/products/samsung-galaxy-s26.jpg', 'assets/images/products/samsung-galaxy-s26.jpg', 'https://www.samsung.com/in/smartphones/galaxy-s26/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Amber Yellow', '#f1d899'),
+(102, 8, 'assets/images/products/samsung-galaxy-z-fold-8.jpg', 'assets/images/products/samsung-galaxy-z-fold-8.jpg', 'https://www.samsung.com/in/smartphones/galaxy-s26/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Phantom Silver Flex', '#d4d5d9'),
+(103, 9, 'assets/images/products/google-pixel-11-pro.jpg', 'assets/images/products/google-pixel-11-pro.jpg', 'https://commons.wikimedia.org/wiki/File:Google_Pixel_9_Pro_XL_(back).jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'D.328', 'Photo by D.328 via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 1, 0, 'Obsidian Black', '#2c2d30'),
+(104, 10, 'assets/images/products/oneplus-15.jpg', 'assets/images/products/oneplus-15.jpg', 'https://commons.wikimedia.org/wiki/File:OnePlus_15_back.jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'Maksdroider', 'Photo by Maksdroider via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 1, 0, 'Emerald Flow Silk', '#c4d1cd'),
+(105, 11, 'assets/images/products/xiaomi-16-ultra.jpg', 'assets/images/products/xiaomi-16-ultra.jpg', 'https://www.mi.com/in/product/xiaomi-17-ultra/', 'Xiaomi Official Media', 'Manufacturer copyrighted', 'Xiaomi Inc.', 'Official product photography courtesy of Xiaomi Inc.', 1, 1, 0, 'Ceramic White Armor', '#f5f5f5'),
+(106, 12, 'assets/images/products/vivo-x200-pro.jpg', 'assets/images/products/vivo-x200-pro.jpg', 'https://commons.wikimedia.org/wiki/File:Vivo_X200_Pro_blue.png', 'Wikimedia Commons', 'CC BY 4.0', 'Vivo Mobile Communication / Wikimedia', 'Vivo X200 Pro product photograph via Wikimedia Commons, licensed under CC BY 4.0.', 1, 1, 0, 'Ocean Blue Sunburst', '#306699'),
+(107, 13, 'assets/images/products/nothing-phone-4.jpg', 'assets/images/products/nothing-phone-4.jpg', 'https://in.nothing.tech/products/phone-4a-pro', 'Nothing Technology Limited', 'Manufacturer copyrighted', 'Nothing Technology Ltd.', 'Product asset courtesy of Nothing Technology Limited.', 1, 1, 0, 'White Glyph Edition', '#eaeaea'),
+(108, 14, 'assets/images/products/iqoo-14-pro.jpg', 'assets/images/products/iqoo-14-pro.jpg', 'https://shop.iqoo.com/in/product/2067?from=iQOO%2015', 'iQOO Official Store', 'Manufacturer copyrighted', 'iQOO / Vivo Global', 'Official product image courtesy of iQOO.', 1, 1, 0, 'BMW M Legend White', '#efefef'),
+(109, 15, 'assets/images/products/realme-gt-8-pro.jpg', 'assets/images/products/realme-gt-8-pro.jpg', 'https://www.realme.com/in/realme-gt-8-pro', 'Realme Official Media', 'Manufacturer copyrighted', 'Realme Mobile Telecommunications Corp.', 'Official product imagery courtesy of Realme.', 1, 1, 0, 'Mars Blue Vegan', '#285880'),
+(110, 16, 'assets/images/products/motorola-edge-70-ultra.jpg', 'assets/images/products/motorola-edge-70-ultra.jpg', 'https://www.motorola.in/smartphones-motorola-edge-70-max/p?skuId=697', 'Motorola Mobility LLC', 'Manufacturer copyrighted', 'Motorola Mobility LLC', 'Official product photo courtesy of Motorola Mobility LLC.', 1, 1, 0, 'Peach Fuzz Vegan Leather', '#f6c4a6'),
+(111, 17, 'assets/images/products/samsung-galaxy-a57.jpg', 'assets/images/products/samsung-galaxy-a57.jpg', 'https://www.samsung.com/in/smartphones/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Awesome Lilac', '#c8b9db'),
+(112, 18, 'assets/images/products/redmi-note-15-pro-plus.jpg', 'assets/images/products/redmi-note-15-pro-plus.jpg', 'https://commons.wikimedia.org/wiki/File:Redmi_Note_15_Pro%2B.jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'Wikimedia Contributor', 'Photo via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 1, 0, 'Aurora Purple', '#786088'),
+(113, 18, 'assets/images/products/redmi-note-15-pro-plus-back.jpg', 'assets/images/products/redmi-note-15-pro-plus-back.jpg', 'https://commons.wikimedia.org/wiki/File:Redmi_Note_15_Pro%2B_backside.jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'Wikimedia Contributor', 'Backside photo via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 0, 1, 'Midnight Black', '#1c1c1c');

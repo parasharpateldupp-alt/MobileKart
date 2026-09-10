@@ -19,6 +19,7 @@ require_once __DIR__ . '/../config/constants.php';
                     <li class="mb-2"><a href="<?= BASE_URL ?>/customer/products.php?filter=trending">Trending 5G Devices</a></li>
                     <li class="mb-2"><a href="<?= BASE_URL ?>/register.php?role=supplier">Sell on MobileKart</a></li>
                     <li class="mb-2"><a href="<?= BASE_URL ?>/customer/products.php?sort=discount_desc">Top Discount Offers</a></li>
+                    <li class="mb-2"><a href="<?= BASE_URL ?>/documentation/image-sources.php"><i class="fa-solid fa-scale-balanced me-1 text-warning"></i> Image Sources &amp; Licenses</a></li>
                 </ul>
             </div>
 

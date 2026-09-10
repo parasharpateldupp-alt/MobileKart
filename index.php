@@ -86,7 +86,7 @@ try {
                             </div>
                         </div>
                         <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/iphone18_promax_natural.png" alt="iPhone 18 Pro Max" style="max-height: 290px;" class="drop-shadow">
+                            <img src="<?= BASE_URL ?>/assets/images/products/apple-iphone-18-pro-max.jpg" alt="iPhone 18 Pro Max" style="max-height: 290px;" class="drop-shadow">
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ try {
                             </div>
                         </div>
                         <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/s26_ultra_gray.png" alt="Samsung Galaxy S26 Ultra" style="max-height: 290px;" class="drop-shadow">
+                            <img src="<?= BASE_URL ?>/assets/images/products/samsung-galaxy-s26-ultra.jpg" alt="Samsung Galaxy S26 Ultra" style="max-height: 290px;" class="drop-shadow">
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@ try {
                             </div>
                         </div>
                         <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/iphone_duo_open.jpg" alt="Apple iPhone Duo" style="max-height: 280px; border-radius: 16px;" class="drop-shadow">
+                            <img src="<?= BASE_URL ?>/assets/images/products/apple-iphone-duo.jpg" alt="Apple iPhone Duo" style="max-height: 280px; border-radius: 16px;" class="drop-shadow">
                         </div>
                     </div>
                 </div>

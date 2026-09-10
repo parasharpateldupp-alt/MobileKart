@@ -64,6 +64,10 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', rtrim($baseUrl, '/'));
 }
 
+// Scheduled Maintenance Mode (set to false to bring live site online)
+if (!defined('MAINTENANCE_MODE')) define('MAINTENANCE_MODE', true);
+require_once dirname(__DIR__) . '/includes/maintenance_check.php';
+
 // Parse DATABASE_URL / MYSQL_URL if provided (common on cloud hosts)
 $dbUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
 $parsedHost = null;
