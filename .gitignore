@@ -1,4 +1,4 @@
-﻿# OS & Editor
+# OS & Editor
 Thumbs.db
 ehthumbs.db
 Desktop.ini
@@ -7,7 +7,7 @@ Desktop.ini
 .vscode/
 .idea/
 
-# Scratch temp docx
-scratch/*.docx
+# Scratch temp
+scratch/
 __pycache__/
 *.pyc

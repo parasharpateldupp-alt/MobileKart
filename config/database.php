@@ -64,6 +64,36 @@ function get_db_connection() {
         $pdo->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
         return $pdo;
     } catch (PDOException $e) {
+        // Fallback 1: Try TiDB Cloud if localhost failed
+        if (DB_HOST === 'localhost' || DB_HOST === '127.0.0.1') {
+            try {
+                $cloudHost = 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+                $cloudPort = '4000';
+                $cloudDb = 'test';
+                $cloudUser = '4AVQkGYiwq2zQBT.root';
+                $cloudPass = 'BNdSSFFOMEjJYR1K';
+                $cloudDsn = "mysql:host={$cloudHost};port={$cloudPort};dbname={$cloudDb};charset=" . DB_CHARSET;
+                $cloudOptions = $options;
+                if ($caPath && file_exists($caPath)) {
+                    $cloudOptions[$sslCaKey] = $caPath;
+                }
+                $pdo = new PDO($cloudDsn, $cloudUser, $cloudPass, $cloudOptions);
+                $pdo->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
+                return $pdo;
+            } catch (Exception $cloudErr) {
+                // Fallback 2: Try SQLite
+                $sqlitePath = dirname(__DIR__) . '/database/mobilekart.sqlite';
+                if (file_exists($sqlitePath)) {
+                    try {
+                        $pdo = new PDO("sqlite:" . $sqlitePath);
+                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                        return $pdo;
+                    } catch (Exception $sqErr) {}
+                }
+            }
+        }
+
         // If script is an API or CLI, return false or error message
         if (php_sapi_name() === 'cli' || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'))) {
             throw $e;

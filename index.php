@@ -70,67 +70,67 @@ try {
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
         </div>
         <div class="carousel-inner">
-            <!-- Slide 1: Galaxy S24 Ultra -->
-            <div class="carousel-item active" style="background: linear-gradient(110deg, #0f172a 0%, #1e293b 60%, #334155 100%); min-height: 380px;">
+            <!-- Slide 1: Apple iPhone 18 Pro Max -->
+            <div class="carousel-item active" style="background: linear-gradient(110deg, #18181b 0%, #27272a 60%, #3f3f46 100%); min-height: 380px;">
                 <div class="container py-5 px-4 px-md-5">
                     <div class="row align-items-center">
                         <div class="col-md-7 text-white">
-                            <span class="badge bg-primary px-3 py-2 text-uppercase fw-bold mb-2">Galaxy AI is Here</span>
-                            <h1 class="fw-black display-5 fw-bold mb-2">Samsung Galaxy S24 Ultra 5G</h1>
-                            <p class="text-white-50 fs-5 mb-4">Titanium Chassis • 200MP Quad Camera with 100x Zoom • Built-in S-Pen</p>
+                            <span class="badge bg-warning text-dark px-3 py-2 text-uppercase fw-bold mb-2">2026 TSMC 2nm Flagship</span>
+                            <h1 class="fw-black display-5 fw-bold mb-2">Apple iPhone 18 Pro Max</h1>
+                            <p class="text-white-50 fs-5 mb-4">Aerospace Titanium • 48MP Fusion Triple Camera with 10x Tetraprism • iOS 20</p>
                             <div class="d-flex align-items-center gap-3">
                                 <a href="<?= BASE_URL ?>/customer/product-details.php?id=1" class="btn btn-fk-yellow btn-lg">
-                                    <i class="fa-solid fa-bolt me-2"></i> Shop Now from ₹1,21,499
-                                </a>
-                                <span class="text-white-50 small">Up to 10% Instant Off</span>
-                            </div>
-                        </div>
-                        <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/s24_ultra.svg" alt="Samsung S24 Ultra" style="max-height: 290px;" class="drop-shadow">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 2: iPhone 15 Pro Max -->
-            <div class="carousel-item" style="background: linear-gradient(110deg, #18181b 0%, #27272a 60%, #3f3f46 100%); min-height: 380px;">
-                <div class="container py-5 px-4 px-md-5">
-                    <div class="row align-items-center">
-                        <div class="col-md-7 text-white">
-                            <span class="badge bg-light text-dark px-3 py-2 text-uppercase fw-bold mb-2">A17 Pro Flagship</span>
-                            <h1 class="fw-black display-5 fw-bold mb-2">Apple iPhone 15 Pro Max</h1>
-                            <p class="text-white-50 fs-5 mb-4">Aerospace-Grade Titanium • 5x Optical Periscope Zoom • Action Button</p>
-                            <div class="d-flex align-items-center gap-3">
-                                <a href="<?= BASE_URL ?>/customer/product-details.php?id=2" class="btn btn-fk-yellow btn-lg">
-                                    <i class="fa-solid fa-cart-shopping me-2"></i> Explore Offers from ₹1,48,700
+                                    <i class="fa-solid fa-cart-shopping me-2"></i> Shop Now from ₹1,59,700
                                 </a>
                                 <span class="text-white-50 small">No Cost EMI Available</span>
                             </div>
                         </div>
                         <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/iphone15_promax.svg" alt="iPhone 15 Pro Max" style="max-height: 290px;">
+                            <img src="<?= BASE_URL ?>/assets/images/products/iphone18_promax_natural.png" alt="iPhone 18 Pro Max" style="max-height: 290px;" class="drop-shadow">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Slide 3: OnePlus 12 -->
-            <div class="carousel-item" style="background: linear-gradient(110deg, #064e3b 0%, #047857 60%, #059669 100%); min-height: 380px;">
+            <!-- Slide 2: Samsung Galaxy S26 Ultra -->
+            <div class="carousel-item" style="background: linear-gradient(110deg, #0f172a 0%, #1e293b 60%, #334155 100%); min-height: 380px;">
                 <div class="container py-5 px-4 px-md-5">
                     <div class="row align-items-center">
                         <div class="col-md-7 text-white">
-                            <span class="badge bg-warning text-dark px-3 py-2 text-uppercase fw-bold mb-2">Smooth Beyond Belief</span>
-                            <h1 class="fw-black display-5 fw-bold mb-2">OnePlus 12 5G (16GB | 512GB)</h1>
-                            <p class="text-white-50 fs-5 mb-4">Snapdragon 8 Gen 3 • 4th Gen Hasselblad Camera • 100W SUPERVOOC</p>
+                            <span class="badge bg-primary px-3 py-2 text-uppercase fw-bold mb-2">Next-Gen Galaxy AI</span>
+                            <h1 class="fw-black display-5 fw-bold mb-2">Samsung Galaxy S26 Ultra 5G</h1>
+                            <p class="text-white-50 fs-5 mb-4">Snapdragon 8 Gen 5 Ultra • 200MP Quad Zoom Camera • Titanium Gray Armor</p>
                             <div class="d-flex align-items-center gap-3">
-                                <a href="<?= BASE_URL ?>/customer/product-details.php?id=3" class="btn btn-fk-yellow btn-lg">
-                                    <i class="fa-solid fa-fire me-2"></i> Grab Deal at ₹64,399
+                                <a href="<?= BASE_URL ?>/customer/product-details.php?id=5" class="btn btn-fk-yellow btn-lg">
+                                    <i class="fa-solid fa-bolt me-2"></i> Grab Deal at ₹1,27,399
                                 </a>
-                                <span class="text-white-50 small">5400 mAh Battery</span>
+                                <span class="text-white-50 small">Built-in S-Pen</span>
                             </div>
                         </div>
                         <div class="col-md-5 text-center d-none d-md-block">
-                            <img src="<?= BASE_URL ?>/assets/images/products/oneplus12.svg" alt="OnePlus 12" style="max-height: 290px;">
+                            <img src="<?= BASE_URL ?>/assets/images/products/s26_ultra_gray.png" alt="Samsung Galaxy S26 Ultra" style="max-height: 290px;" class="drop-shadow">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Apple iPhone Duo (Foldable) -->
+            <div class="carousel-item" style="background: linear-gradient(110deg, #31103f 0%, #4a1d6d 60%, #6b21a8 100%); min-height: 380px;">
+                <div class="container py-5 px-4 px-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-7 text-white">
+                            <span class="badge bg-light text-dark px-3 py-2 text-uppercase fw-bold mb-2">Revolutionary Foldable</span>
+                            <h1 class="fw-black display-5 fw-bold mb-2">Apple iPhone Duo Foldable</h1>
+                            <p class="text-white-50 fs-5 mb-4">8.1" Inner Ceramic OLED • Titanium Flex Hinge • Spatial Video 8K Recording</p>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="<?= BASE_URL ?>/customer/product-details.php?id=2" class="btn btn-fk-yellow btn-lg">
+                                    <i class="fa-solid fa-fire me-2"></i> Pre-Order at ₹1,89,900
+                                </a>
+                                <span class="text-white-50 small">Dual MagSafe Induction</span>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-center d-none d-md-block">
+                            <img src="<?= BASE_URL ?>/assets/images/products/iphone_duo_open.jpg" alt="Apple iPhone Duo" style="max-height: 280px; border-radius: 16px;" class="drop-shadow">
                         </div>
                     </div>
                 </div>
@@ -155,8 +155,8 @@ try {
         <div class="d-flex align-items-center gap-2 overflow-auto py-2">
             <?php foreach ($brands as $brand): ?>
                 <a href="<?= BASE_URL ?>/customer/products.php?brand=<?= urlencode($brand['slug']) ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 text-nowrap d-flex align-items-center gap-2">
-                    <i class="fa-brands <?= htmlspecialchars($brand['logo_icon']) ?>"></i>
-                    <span><?= htmlspecialchars($brand['name']) ?></span>
+                    <?= brand_logo_html($brand, 18) ?>
+                    <span class="fw-semibold text-dark"><?= htmlspecialchars($brand['name']) ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
@@ -187,8 +187,11 @@ try {
                                     <img src="<?= product_image_url($product['image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" class="fk-product-img">
                                 </a>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['brand_name']) ?></span>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
+                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <span><?= htmlspecialchars($product['brand_name']) ?></span>
+                                </span>
                                 <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">
@@ -251,8 +254,11 @@ try {
                                     <img src="<?= product_image_url($product['image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" class="fk-product-img">
                                 </a>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['brand_name']) ?></span>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
+                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <span><?= htmlspecialchars($product['brand_name']) ?></span>
+                                </span>
                                 <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">
@@ -315,8 +321,11 @@ try {
                                     <img src="<?= product_image_url($product['image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" class="fk-product-img">
                                 </a>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['brand_name']) ?></span>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
+                                    <?= brand_logo_html($product['brand_name'], 14) ?>
+                                    <span><?= htmlspecialchars($product['brand_name']) ?></span>
+                                </span>
                                 <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
                             </div>
                             <a href="<?= BASE_URL ?>/customer/product-details.php?id=<?= $product['product_id'] ?>" class="fk-product-title">

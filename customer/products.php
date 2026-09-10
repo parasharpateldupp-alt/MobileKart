@@ -179,12 +179,13 @@ $allStorages = ['128 GB', '256 GB', '512 GB'];
                     <!-- Brand Checkboxes -->
                     <div class="mb-3 border-bottom pb-3">
                         <label class="form-label fw-bold small text-secondary">BRAND</label>
-                        <div style="max-height: 160px; overflow-y: auto;" class="pe-1">
+                        <div style="max-height: 200px; overflow-y: auto;" class="pe-1">
                             <?php foreach ($allBrands as $brand): ?>
-                                <div class="form-check mb-1">
-                                    <input class="form-check-input" type="checkbox" name="brand[]" value="<?= htmlspecialchars($brand['slug']) ?>" id="brand_<?= htmlspecialchars($brand['slug']) ?>" <?= in_array($brand['slug'], $brandSlugs) ? 'checked' : '' ?>>
-                                    <label class="form-check-label small" for="brand_<?= htmlspecialchars($brand['slug']) ?>">
-                                        <?= htmlspecialchars($brand['name']) ?>
+                                <div class="form-check mb-2 d-flex align-items-center">
+                                    <input class="form-check-input me-2 mt-0" type="checkbox" name="brand[]" value="<?= htmlspecialchars($brand['slug']) ?>" id="brand_<?= htmlspecialchars($brand['slug']) ?>" <?= in_array($brand['slug'], $brandSlugs) ? 'checked' : '' ?>>
+                                    <label class="form-check-label small d-flex align-items-center gap-2 text-dark" for="brand_<?= htmlspecialchars($brand['slug']) ?>" style="cursor: pointer;">
+                                        <?= brand_logo_html($brand, 16) ?>
+                                        <span class="fw-semibold"><?= htmlspecialchars($brand['name']) ?></span>
                                     </label>
                                 </div>
                             <?php endforeach; ?>
@@ -297,8 +298,11 @@ $allStorages = ['128 GB', '256 GB', '512 GB'];
                                     </a>
                                 </div>
                                 
-                                <div class="d-flex align-items-center justify-content-between mb-1">
-                                    <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['brand_name']) ?></span>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
+                                        <?= brand_logo_html($product['brand_name'], 14) ?>
+                                        <span><?= htmlspecialchars($product['brand_name']) ?></span>
+                                    </span>
                                     <span class="fk-rating-badge"><?= number_format($product['rating'], 1) ?> ★</span>
                                 </div>
 

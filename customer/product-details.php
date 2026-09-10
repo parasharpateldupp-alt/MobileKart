@@ -31,6 +31,11 @@ if (!$product) {
 
 $pageTitle = htmlspecialchars($product['product_name']) . " - Specs & Price - MobileKart";
 
+// Fetch color variant images
+$imgStmt = $db->prepare("SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC, is_primary DESC");
+$imgStmt->execute([$productId]);
+$variantImages = $imgStmt->fetchAll();
+
 // Check verified purchase eligibility for reviews
 $user = current_user();
 $canReview = false;
@@ -123,9 +128,24 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
             
             <!-- Left: Graphic / Image & Actions -->
             <div class="col-lg-5 text-center">
-                <div class="bg-light p-4 rounded-4 mb-3" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
-                    <img src="<?= product_image_url($product['image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" style="max-height: 380px; max-width: 100%;" class="img-fluid drop-shadow">
+                <div class="bg-light p-4 rounded-4 mb-3 position-relative overflow-hidden" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
+                    <img id="mainProductImage" src="<?= product_image_url($product['image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" style="max-height: 380px; max-width: 100%; object-fit: contain; transition: opacity 0.2s ease, transform 0.2s ease;" class="img-fluid drop-shadow">
                 </div>
+
+                <?php if (count($variantImages) > 1): ?>
+                    <!-- Variant Image Thumbnail Bar -->
+                    <div class="d-flex align-items-center justify-content-center gap-2 mb-3 flex-wrap">
+                        <?php foreach ($variantImages as $vImg): ?>
+                            <button type="button" 
+                                    class="variant-thumb-btn border rounded-3 p-1 bg-white <?= $vImg['is_primary'] ? 'active-thumb border-primary shadow-sm' : 'border-light-subtle' ?>" 
+                                    style="width: 54px; height: 54px; cursor: pointer; transition: all 0.2s ease; overflow: hidden;"
+                                    onclick="switchProductColor('<?= htmlspecialchars($vImg['image_url']) ?>', '<?= htmlspecialchars(addslashes($vImg['color_name'] ?? '')) ?>', this)"
+                                    title="<?= htmlspecialchars($vImg['color_name'] ?? '') ?>">
+                                <img src="<?= product_image_url($vImg['image_url']) ?>" alt="<?= htmlspecialchars($vImg['color_name'] ?? '') ?>" style="width: 100%; height: 100%; object-fit: contain;">
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
 
                 <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
                     <label class="fw-bold small text-secondary">Quantity:</label>
@@ -152,14 +172,38 @@ require_once dirname(__DIR__) . '/includes/navbar.php';
 
             <!-- Right: Specs, Pricing, Offers -->
             <div class="col-lg-7">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="badge bg-light text-primary border fw-bold"><?= htmlspecialchars($product['brand_name']) ?></span>
+                <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                    <span class="badge bg-light text-dark border fw-bold d-inline-flex align-items-center gap-2 py-1 px-3">
+                        <?= brand_logo_html($product['brand_name'], 18) ?>
+                        <span><?= htmlspecialchars($product['brand_name']) ?></span>
+                    </span>
                     <span class="badge bg-light text-secondary border"><?= htmlspecialchars($product['category_name']) ?></span>
                     <span class="badge bg-success-subtle text-success border border-success-subtle ms-auto"><i class="fa-solid fa-shield-check me-1"></i> 100% Genuine</span>
                 </div>
 
-                <h3 class="fw-bold text-dark mb-2"><?= htmlspecialchars($product['product_name']) ?></h3>
-                <div class="text-muted small mb-3">Model: <code><?= htmlspecialchars($product['model']) ?></code> • Color: <strong><?= htmlspecialchars($product['color']) ?></strong></div>
+                <h3 class="fw-bold text-dark mb-1"><?= htmlspecialchars($product['product_name']) ?></h3>
+                <div class="text-muted small mb-3">Model: <code><?= htmlspecialchars($product['model']) ?></code> • Active Color: <strong id="selectedColorLabel" class="text-primary"><?= htmlspecialchars($product['color']) ?></strong></div>
+
+                <?php if (!empty($variantImages)): ?>
+                    <!-- Color Swatches Selector -->
+                    <div class="mb-3 p-3 rounded-3 bg-light border">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="small fw-bold text-uppercase text-secondary" style="letter-spacing: 0.5px;"><i class="fa-solid fa-palette text-primary me-1"></i> Choose Color Variant:</span>
+                            <span class="badge bg-white text-dark border small shadow-sm" id="colorBadgeName"><?= htmlspecialchars($product['color']) ?></span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap" id="colorSwatchesContainer">
+                            <?php foreach ($variantImages as $v): ?>
+                                <button type="button"
+                                        class="btn btn-sm variant-swatch-btn d-flex align-items-center gap-2 py-1 px-3 rounded-pill <?= $v['is_primary'] ? 'active-swatch border-primary bg-white shadow-sm' : 'border-secondary-subtle bg-white' ?>"
+                                        style="cursor: pointer; transition: all 0.2s ease; border-width: 2px;"
+                                        onclick="switchProductColor('<?= htmlspecialchars($v['image_url']) ?>', '<?= htmlspecialchars(addslashes($v['color_name'] ?? '')) ?>', this)">
+                                    <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background-color: <?= htmlspecialchars($v['color_hex'] ?? '#333') ?>; border: 1px solid rgba(0,0,0,0.25);" class="shadow-sm"></span>
+                                    <span class="fw-semibold small text-dark"><?= htmlspecialchars($v['color_name'] ?? 'Standard') ?></span>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Rating -->
                 <div class="d-flex align-items-center gap-3 mb-3">
@@ -421,6 +465,58 @@ function changeDetailQty(delta) {
 function addCurrentToCart(buyNow) {
     const qty = parseInt(document.getElementById('detailQuantity').value) || 1;
     addToCart(<?= $productId ?>, qty, buyNow);
+}
+
+function switchProductColor(imageUrl, colorName, clickedEl) {
+    const mainImg = document.getElementById('mainProductImage');
+    const colorLabel = document.getElementById('selectedColorLabel');
+    const colorBadge = document.getElementById('colorBadgeName');
+
+    if (mainImg) {
+        mainImg.style.opacity = '0.35';
+        mainImg.style.transform = 'scale(0.97)';
+        setTimeout(() => {
+            const cleanUrl = imageUrl.replace(/^\/+/, '');
+            mainImg.src = '<?= BASE_URL ?>/' + cleanUrl;
+            mainImg.style.opacity = '1';
+            mainImg.style.transform = 'scale(1)';
+        }, 120);
+    }
+
+    if (colorLabel) {
+        colorLabel.textContent = colorName;
+    }
+    if (colorBadge) {
+        colorBadge.textContent = colorName;
+    }
+
+    // Update active swatch state
+    document.querySelectorAll('.variant-swatch-btn').forEach(btn => {
+        btn.classList.remove('active-swatch', 'border-primary', 'shadow-sm');
+        btn.classList.add('border-secondary-subtle');
+    });
+    if (clickedEl && clickedEl.classList.contains('variant-swatch-btn')) {
+        clickedEl.classList.add('active-swatch', 'border-primary', 'shadow-sm');
+        clickedEl.classList.remove('border-secondary-subtle');
+    } else {
+        // Highlight matching swatch by text
+        document.querySelectorAll('.variant-swatch-btn').forEach(btn => {
+            if (btn.innerText.trim().toLowerCase() === colorName.trim().toLowerCase()) {
+                btn.classList.add('active-swatch', 'border-primary', 'shadow-sm');
+                btn.classList.remove('border-secondary-subtle');
+            }
+        });
+    }
+
+    // Update active thumbnail state
+    document.querySelectorAll('.variant-thumb-btn').forEach(tb => {
+        tb.classList.remove('active-thumb', 'border-primary', 'shadow-sm');
+        tb.classList.add('border-light-subtle');
+        if (tb.getAttribute('title') && tb.getAttribute('title').trim().toLowerCase() === colorName.trim().toLowerCase()) {
+            tb.classList.add('active-thumb', 'border-primary', 'shadow-sm');
+            tb.classList.remove('border-light-subtle');
+        }
+    });
 }
 </script>
 

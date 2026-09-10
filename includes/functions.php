@@ -25,6 +25,47 @@ function product_image_url($imagePath) {
 }
 
 /**
+ * Render brand emblem / logo HTML (supports array or string)
+ */
+function brand_logo_html($brand, $height = 20) {
+    if (is_array($brand)) {
+        $rawName = $brand['name'] ?? '';
+        $slug = strtolower(trim($brand['slug'] ?? ''));
+        $icon = htmlspecialchars($brand['logo_icon'] ?? 'fa-mobile-screen');
+    } else {
+        $rawName = (string)$brand;
+        $slug = strtolower(trim($rawName));
+        $icon = 'fa-mobile-screen';
+    }
+
+    $name = htmlspecialchars($rawName);
+
+    // Map common brand variations to canonical SVG filename
+    $key = preg_replace('/[^a-z0-9]/', '', $slug);
+    if (str_contains($slug, 'apple') || $key === 'apple') $cleanSlug = 'apple';
+    elseif (str_contains($slug, 'samsung') || $key === 'samsung') $cleanSlug = 'samsung';
+    elseif (str_contains($slug, 'google') || $key === 'google') $cleanSlug = 'google';
+    elseif (str_contains($slug, 'oneplus') || $key === 'oneplus') $cleanSlug = 'oneplus';
+    elseif (str_contains($slug, 'xiaomi') || str_contains($slug, 'redmi') || $key === 'xiaomi') $cleanSlug = 'xiaomi';
+    elseif (str_contains($slug, 'vivo') || $key === 'vivo') $cleanSlug = 'vivo';
+    elseif (str_contains($slug, 'realme') || $key === 'realme') $cleanSlug = 'realme';
+    elseif (str_contains($slug, 'motorola') || str_contains($slug, 'moto') || $key === 'motorola') $cleanSlug = 'motorola';
+    elseif (str_contains($slug, 'nothing') || $key === 'nothing') $cleanSlug = 'nothing';
+    elseif (str_contains($slug, 'iqoo') || $key === 'iqoo') $cleanSlug = 'iqoo';
+    else $cleanSlug = $slug;
+
+    $relPath = '/assets/images/brands/' . $cleanSlug . '.svg';
+    $fullPath = dirname(__DIR__) . $relPath;
+
+    if (file_exists($fullPath)) {
+        return '<img src="' . BASE_URL . $relPath . '" alt="' . $name . '" style="height: ' . (int)$height . 'px; max-width: 48px; object-fit: contain; vertical-align: middle;" class="brand-badge-img">';
+    }
+
+    $prefix = (str_starts_with($icon, 'fa-brands') || str_starts_with($icon, 'fa-solid')) ? '' : 'fa-solid ';
+    return '<i class="' . $prefix . $icon . '"></i>';
+}
+
+/**
  * Format currency in Indian Rupees format (e.g. ₹1,21,499.00 or ₹1,21,499)
  */
 function format_inr($amount, $showDecimals = true) {
