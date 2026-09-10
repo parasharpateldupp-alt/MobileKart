@@ -34,6 +34,19 @@ $stmt = $db->query("
 ");
 $products = $stmt->fetchAll();
 
+// Preload relational metadata in 3 bulk queries to eliminate per-iteration latency
+$allImages = $db->query("SELECT * FROM product_images ORDER BY is_primary DESC, sort_order ASC")->fetchAll();
+$imagesByProduct = [];
+foreach ($allImages as $im) {
+    $pid = (int)$im['product_id'];
+    if (!isset($imagesByProduct[$pid])) {
+        $imagesByProduct[$pid] = $im;
+    }
+}
+
+$catCounts = $db->query("SELECT product_id, COUNT(*) AS cnt FROM product_categories GROUP BY product_id")->fetchAll(PDO::FETCH_KEY_PAIR);
+$varCounts = $db->query("SELECT product_id, COUNT(*) AS cnt FROM product_variants GROUP BY product_id")->fetchAll(PDO::FETCH_KEY_PAIR);
+
 $results = [];
 $totalChecks = 0;
 $passedChecks = 0;
@@ -75,15 +88,7 @@ foreach ($products as $p) {
 
     // 2. Check Primary Image & Registration
     $totalChecks++;
-    $imgStmt = $db->prepare("SELECT * FROM product_images WHERE product_id = ? AND is_primary = 1 LIMIT 1");
-    $imgStmt->execute([$pId]);
-    $img = $imgStmt->fetch();
-    if (!$img) {
-        // Fallback: any image
-        $anyImgStmt = $db->prepare("SELECT * FROM product_images WHERE product_id = ? LIMIT 1");
-        $anyImgStmt->execute([$pId]);
-        $img = $anyImgStmt->fetch();
-    }
+    $img = $imagesByProduct[$pId] ?? null;
     if (!$img) {
         $issues[] = ['code' => 'WRONG_IMAGE', 'msg' => "No verified primary image registered in product_images metadata table."];
     } else {
@@ -95,9 +100,7 @@ foreach ($products as $p) {
 
     // 3. Check Multi-Category Mapping
     $totalChecks++;
-    $catStmt = $db->prepare("SELECT COUNT(*) FROM product_categories WHERE product_id = ?");
-    $catStmt->execute([$pId]);
-    $catCount = (int)$catStmt->fetchColumn();
+    $catCount = (int)($catCounts[$pId] ?? 0);
     if ($catCount === 0) {
         $issues[] = ['code' => 'WRONG_CATEGORY', 'msg' => "No category associations found in product_categories table."];
     }
@@ -117,9 +120,7 @@ foreach ($products as $p) {
 
     // 6. Check Variants
     $totalChecks++;
-    $varStmt = $db->prepare("SELECT COUNT(*) FROM product_variants WHERE product_id = ?");
-    $varStmt->execute([$pId]);
-    $varCount = (int)$varStmt->fetchColumn();
+    $varCount = (int)($varCounts[$pId] ?? 0);
     if ($varCount === 0) {
         $issues[] = ['code' => 'MISSING_VARIANT', 'msg' => "No product variants configured in product_variants table."];
     }
