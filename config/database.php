@@ -49,12 +49,31 @@ function get_db_connection() {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
         $initCmdKey                  => "SET NAMES " . DB_CHARSET,
-        $sslVerifyKey                => false
+        $sslVerifyKey                => false,
+        PDO::ATTR_TIMEOUT            => 2
     ];
 
     if (DB_HOST !== 'localhost' && DB_HOST !== '127.0.0.1') {
         if ($caPath && file_exists($caPath)) {
             $options[$sslCaKey] = $caPath;
+        }
+    }
+
+    $lastErr = null;
+
+    // Fast local SQLite path: instant execution without socket latency
+    if (DB_HOST === 'localhost' || DB_HOST === '127.0.0.1') {
+        $sqlitePath = dirname(__DIR__) . '/database/mobilekart.sqlite';
+        if (file_exists($sqlitePath) && !getenv('FORCE_MYSQL')) {
+            try {
+                $pdo = new PDO("sqlite:" . $sqlitePath);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                register_sqlite_functions($pdo);
+                return $pdo;
+            } catch (Exception $sqErr) {
+                $lastErr = $sqErr;
+            }
         }
     }
 
@@ -64,40 +83,34 @@ function get_db_connection() {
         $pdo->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
         return $pdo;
     } catch (PDOException $e) {
-        // Fallback 1: Try TiDB Cloud if localhost failed
-        if (DB_HOST === 'localhost' || DB_HOST === '127.0.0.1') {
-            try {
-                $cloudHost = 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
-                $cloudPort = '4000';
-                $cloudDb = 'test';
-                $cloudUser = '4AVQkGYiwq2zQBT.root';
-                $cloudPass = 'BNdSSFFOMEjJYR1K';
-                $cloudDsn = "mysql:host={$cloudHost};port={$cloudPort};dbname={$cloudDb};charset=" . DB_CHARSET;
-                $cloudOptions = $options;
-                if ($caPath && file_exists($caPath)) {
-                    $cloudOptions[$sslCaKey] = $caPath;
-                }
-                $pdo = new PDO($cloudDsn, $cloudUser, $cloudPass, $cloudOptions);
-                $pdo->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
-                return $pdo;
-            } catch (Exception $cloudErr) {
-                // Fallback 2: Try SQLite
-                $sqlitePath = dirname(__DIR__) . '/database/mobilekart.sqlite';
-                if (file_exists($sqlitePath)) {
-                    try {
-                        $pdo = new PDO("sqlite:" . $sqlitePath);
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                        return $pdo;
-                    } catch (Exception $sqErr) {}
-                }
-            }
-        }
+        $lastErr = $e;
+    }
 
-        // If script is an API or CLI, return false or error message
-        if (php_sapi_name() === 'cli' || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'))) {
-            throw $e;
+    // Fallback: Try TiDB Cloud if localhost failed
+    if (DB_HOST === 'localhost' || DB_HOST === '127.0.0.1') {
+        try {
+            $cloudHost = 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+            $cloudPort = '4000';
+            $cloudDb = 'test';
+            $cloudUser = '4AVQkGYiwq2zQBT.root';
+            $cloudPass = 'BNdSSFFOMEjJYR1K';
+            $cloudDsn = "mysql:host={$cloudHost};port={$cloudPort};dbname={$cloudDb};charset=" . DB_CHARSET;
+            $cloudOptions = $options;
+            if ($caPath && file_exists($caPath)) {
+                $cloudOptions[$sslCaKey] = $caPath;
+            }
+            $pdo = new PDO($cloudDsn, $cloudUser, $cloudPass, $cloudOptions);
+            $pdo->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
+            return $pdo;
+        } catch (Exception $cloudErr) {
+            if (!$lastErr) $lastErr = $cloudErr;
         }
+    }
+
+    // If script is an API or CLI, return false or error message
+    if (php_sapi_name() === 'cli' || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'))) {
+        throw ($lastErr ?: new Exception("Database connection failed"));
+    }
 
         // Professional diagnostic screen for academic demo & cloud setup
         $isVercel = (!empty($_ENV['VERCEL']) || !empty($_SERVER['VERCEL']) || str_contains($_SERVER['HTTP_HOST'] ?? '', 'vercel.app'));
@@ -175,7 +188,7 @@ function get_db_connection() {
         </div>
 
         <div class="mt-4 pt-3 border-top text-muted small">
-            <strong>Technical Detail:</strong> ' . htmlspecialchars($e->getMessage()) . '
+            <strong>Technical Detail:</strong> ' . htmlspecialchars($lastErr ? $lastErr->getMessage() : 'Database offline') . '
         </div>
                     </div>
                 </div>
@@ -183,5 +196,36 @@ function get_db_connection() {
         </body>
         </html>';
         exit;
-    }
+}
+
+
+/**
+ * Register MySQL compatibility functions in SQLite PDO
+ */
+function register_sqlite_functions(PDO $pdo): void {
+    $pdo->sqliteCreateFunction('NOW', fn() => date('Y-m-d H:i:s'));
+    $pdo->sqliteCreateFunction('CURDATE', fn() => date('Y-m-d'));
+    $pdo->sqliteCreateFunction('CURTIME', fn() => date('H:i:s'));
+    $pdo->sqliteCreateFunction('CONCAT', fn(...$args) => implode('', $args));
+    $pdo->sqliteCreateFunction('CONCAT_WS', fn($sep, ...$args) => implode($sep, $args));
+    $pdo->sqliteCreateFunction('IF', fn($cond, $t, $f) => $cond ? $t : $f);
+    $pdo->sqliteCreateFunction('IFNULL', fn($v, $f) => $v !== null ? $v : $f);
+    $pdo->sqliteCreateFunction('YEAR', fn($d) => $d ? date('Y', strtotime($d)) : null);
+    $pdo->sqliteCreateFunction('MONTH', fn($d) => $d ? date('m', strtotime($d)) : null);
+    $pdo->sqliteCreateFunction('DAY', fn($d) => $d ? date('d', strtotime($d)) : null);
+    $pdo->sqliteCreateFunction('DATEDIFF', fn($d1, $d2) => (int)round((strtotime($d1) - strtotime($d2)) / 86400));
+    $pdo->sqliteCreateFunction('GREATEST', fn(...$args) => count($args) > 0 ? max($args) : null);
+    $pdo->sqliteCreateFunction('LEAST', fn(...$args) => count($args) > 0 ? min($args) : null);
+    $pdo->sqliteCreateFunction('DATE_FORMAT', function($date, $format) {
+        if (!$date) return null;
+        $ts = strtotime($date);
+        if ($ts === false) return null;
+        $map = [
+            '%Y' => 'Y', '%y' => 'y', '%m' => 'm', '%c' => 'n',
+            '%d' => 'd', '%e' => 'j', '%H' => 'H', '%h' => 'h',
+            '%i' => 'i', '%s' => 's', '%M' => 'F', '%b' => 'M',
+            '%W' => 'l', '%a' => 'D', '%p' => 'A'
+        ];
+        return date(strtr($format, $map), $ts);
+    });
 }

@@ -6,9 +6,9 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container py-5">
     <div class="row mb-5 text-center">
         <div class="col-lg-8 mx-auto">
-            <span class="badge bg-primary px-3 py-2 text-uppercase mb-2">Corporate Profile</span>
+            <span class="badge bg-primary px-3 py-2 text-uppercase mb-2">Academic Demonstration Profile</span>
             <h1 class="display-5 fw-bold text-dark">About MobileKart Distribution</h1>
-            <p class="lead text-muted">A Comprehensive 3-Tier Enterprise Smartphone Procurement, Inventory Control & Distribution Management Platform.</p>
+            <p class="lead text-muted">An Academic 3-Tier Enterprise Smartphone Procurement, Inventory Control & Distribution Management System.</p>
         </div>
     </div>
     <div class="row g-4 mb-5">
@@ -17,8 +17,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="feature-icon bg-primary text-white mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                     <i class="fa-solid fa-mobile-screen-button fa-xl"></i>
                 </div>
-                <h4 class="fw-bold">100% Genuine Flagships</h4>
-                <p class="text-muted">Direct manufacturer allotments with verified IMEI barcodes and comprehensive 1-year brand warranty on all devices.</p>
+                <h4 class="fw-bold">Curated Smartphone Lineup</h4>
+                <p class="text-muted">Academic representation of 2026 flagships with accurate Indian pricing (INR), technical specifications, and official/open-license assets.</p>
             </div>
         </div>
         <div class="col-md-4">
@@ -26,8 +26,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="feature-icon bg-success text-white mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                     <i class="fa-solid fa-truck-fast fa-xl"></i>
                 </div>
-                <h4 class="fw-bold">Fast Regional Distribution</h4>
-                <p class="text-muted">Optimized multi-depot fulfillment network with Ekart and Blue Dart express logistics offering 7-stage consignment milestone tracking.</p>
+                <h4 class="fw-bold">Regional Distribution Architecture</h4>
+                <p class="text-muted">Simulated multi-hub fulfillment model demonstrating logistics dispatch workflows with live milestone shipment tracking.</p>
             </div>
         </div>
         <div class="col-md-4">

@@ -64,14 +64,19 @@ require_once __DIR__ . '/../config/constants.php';
             </div>
         </div>
 
-        <div class="fk-footer-bottom d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-center text-md-start">
-            <div>
-                <span class="text-warning fw-bold">MobileKart</span> &copy; <?= date('Y') ?> Online Mobile Purchasing &amp; Distributing System. All rights reserved.
+        <div class="fk-footer-bottom d-flex flex-column align-items-center justify-content-between gap-3 text-center">
+            <div class="text-white-50 small" style="max-width: 900px;">
+                <i class="fa-solid fa-graduation-cap text-warning me-1"></i> <strong>Academic Demonstration Project</strong>: MobileKart is an educational mobile purchasing and distribution system developed for academic showcase (DFD Architecture Levels 0-2). All smartphone product designs, logos, and brand trademarks belong to their respective corporate copyright holders.
             </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-white-50 small"><i class="fa-solid fa-shield-halved text-success me-1"></i> 100% Authentic Mobiles</span>
-                <span class="text-white-50 small"><i class="fa-solid fa-lock text-primary me-1"></i> 256-Bit Encrypted Payments</span>
-                <span class="text-white-50 small"><i class="fa-solid fa-truck-fast text-warning me-1"></i> Express Dispatch</span>
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between w-100 gap-3 border-top border-secondary pt-3">
+                <div>
+                    <span class="text-warning fw-bold">MobileKart</span> &copy; <?= date('Y') ?> Online Mobile Purchasing &amp; Distributing System. Academic Showcase.
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-white-50 small"><i class="fa-solid fa-graduation-cap text-warning me-1"></i> Academic Project</span>
+                    <span class="text-white-50 small"><i class="fa-solid fa-mobile-screen text-success me-1"></i> Demo Catalog</span>
+                    <span class="text-white-50 small"><i class="fa-solid fa-shield-halved text-primary me-1"></i> Mock Payment System</span>
+                </div>
             </div>
         </div>
     </div>

@@ -19,13 +19,15 @@ $events = [];
 $order = null;
 
 if ($orderId > 0) {
+    $userId = $_SESSION['user_id'] ?? 0;
+    $role = $_SESSION['user_role'] ?? '';
     $stmt = $db->prepare("
         SELECT f.*, o.order_number, o.order_date, o.order_status, o.shipping_name, o.shipping_city, o.shipping_state, o.total_amount
         FROM fulfillments f
         JOIN orders o ON f.order_id = o.order_id
-        WHERE f.order_id = ?
+        WHERE f.order_id = ? AND (o.customer_id = ? OR ? = 'ADMIN')
     ");
-    $stmt->execute([$orderId]);
+    $stmt->execute([$orderId, $userId, $role]);
     $fulfillment = $stmt->fetch();
 } elseif (!empty($trackingQuery)) {
     $stmt = $db->prepare("

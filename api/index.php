@@ -30,7 +30,7 @@ $isBypassed = (isset($_GET['preview_key']) && $_GET['preview_key'] === $bypassKe
     || (isset($_COOKIE['mk_preview_token']) && $_COOKIE['mk_preview_token'] === $bypassKey)
     || (isset($_GET['admin_preview']));
 
-$isMaintenanceActive = file_exists($rootDir . '/maintenance.flag') || true;
+$isMaintenanceActive = file_exists($rootDir . '/maintenance.flag');
 
 if ($isMaintenanceActive && !$isBypassed) {
     // Allow static asset requests to pass through

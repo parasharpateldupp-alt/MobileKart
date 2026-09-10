@@ -65,7 +65,7 @@ if (!defined('BASE_URL')) {
 }
 
 // Scheduled Maintenance Mode (set to false to bring live site online)
-if (!defined('MAINTENANCE_MODE')) define('MAINTENANCE_MODE', true);
+if (!defined('MAINTENANCE_MODE')) define('MAINTENANCE_MODE', false);
 require_once dirname(__DIR__) . '/includes/maintenance_check.php';
 
 // Parse DATABASE_URL / MYSQL_URL if provided (common on cloud hosts)

@@ -191,6 +191,10 @@ try {
         ");
         $insEvent->execute([$fulfillmentId]);
 
+        // Clear customer cart items upon successful order completion
+        $clearCart = $db->prepare("DELETE FROM cart_items WHERE cart_id IN (SELECT cart_id FROM cart WHERE user_id = ?)");
+        $clearCart->execute([$userId]);
+
         $db->commit();
 
         // Audit Logging

@@ -786,3 +786,74 @@ INSERT INTO `product_images` (`image_id`, `product_id`, `image_url`, `local_path
 (111, 17, 'assets/images/products/samsung-galaxy-a57.jpg', 'assets/images/products/samsung-galaxy-a57.jpg', 'https://www.samsung.com/in/smartphones/', 'Samsung Electronics Newsroom', 'Manufacturer copyrighted', 'Samsung Electronics Co., Ltd.', 'Official product asset courtesy of Samsung Electronics Co., Ltd.', 1, 1, 0, 'Awesome Lilac', '#c8b9db'),
 (112, 18, 'assets/images/products/redmi-note-15-pro-plus.jpg', 'assets/images/products/redmi-note-15-pro-plus.jpg', 'https://commons.wikimedia.org/wiki/File:Redmi_Note_15_Pro%2B.jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'Wikimedia Contributor', 'Photo via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 1, 0, 'Aurora Purple', '#786088'),
 (113, 18, 'assets/images/products/redmi-note-15-pro-plus-back.jpg', 'assets/images/products/redmi-note-15-pro-plus-back.jpg', 'https://commons.wikimedia.org/wiki/File:Redmi_Note_15_Pro%2B_backside.jpg', 'Wikimedia Commons', 'CC BY-SA 4.0', 'Wikimedia Contributor', 'Backside photo via Wikimedia Commons, licensed under CC BY-SA 4.0.', 1, 0, 1, 'Midnight Black', '#1c1c1c');
+
+-- --------------------------------------------------------
+-- Demo Customers (DFD P1.1)
+-- --------------------------------------------------------
+INSERT INTO `users` (`user_id`, `name`, `email`, `phone`, `password_hash`, `role`, `status`, `address`, `city`, `state`, `pincode`, `created_at`) VALUES
+(13, 'Rahul Sharma', 'customer@mobilekart.com', '9876543210', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'CUSTOMER', 'ACTIVE', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar', 'Bengaluru', 'Karnataka', '560038', '2026-01-15 10:00:00'),
+(14, 'Priya Patel', 'priya.patel@mobilekart.com', '9823456789', '$2y$10$6Dsi6c8ymJMJvmyQHOD9O./gge5ZKCS7feU8p80rQpfNgEJaQeKp.', 'CUSTOMER', 'ACTIVE', 'B-12, Shanti Niketan Society, Satellite Road', 'Ahmedabad', 'Gujarat', '380015', '2026-01-20 11:30:00');
+
+-- --------------------------------------------------------
+-- Demo Orders & Items (DFD P1.3)
+-- --------------------------------------------------------
+INSERT INTO `orders` (`order_id`, `order_number`, `customer_id`, `order_date`, `subtotal`, `discount`, `tax`, `shipping_charge`, `total_amount`, `payment_status`, `order_status`, `shipping_name`, `shipping_phone`, `shipping_address`, `shipping_city`, `shipping_state`, `shipping_pincode`, `notes`) VALUES
+(1, 'ORD-20260220-A1B2C3', 13, '2026-02-20 10:30:00', 127399.00, 0.00, 0.00, 0.00, 127399.00, 'PAID', 'DELIVERED', 'Rahul Sharma', '9876543210', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar', 'Bengaluru', 'Karnataka', '560038', 'Deliver before 6 PM'),
+(2, 'ORD-20260301-D4E5F6', 13, '2026-03-01 14:15:00', 68999.00, 0.00, 0.00, 0.00, 68999.00, 'PAID', 'SHIPPED', 'Rahul Sharma', '9876543210', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar', 'Bengaluru', 'Karnataka', '560038', 'Leave with security if not available'),
+(3, 'ORD-20260305-G7H8I9', 13, '2026-03-05 09:45:00', 159706.00, 0.00, 0.00, 0.00, 159706.00, 'PAID', 'PROCESSING', 'Rahul Sharma', '9876543210', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar', 'Bengaluru', 'Karnataka', '560038', 'Express priority delivery'),
+(4, 'ORD-20260228-J1K2L3', 14, '2026-02-28 16:20:00', 85499.00, 0.00, 0.00, 0.00, 85499.00, 'PAID', 'DELIVERED', 'Priya Patel', '9823456789', 'B-12, Shanti Niketan Society, Satellite Road', 'Ahmedabad', 'Gujarat', '380015', 'Call before arrival');
+
+INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `supplier_id`, `quantity`, `price`, `subtotal`) VALUES
+(1, 1, 5, 2, 1, 127399.00, 127399.00),
+(2, 2, 10, 4, 1, 68999.00, 68999.00),
+(3, 3, 1, 1, 1, 159706.00, 159706.00),
+(4, 4, 12, 6, 1, 85499.00, 85499.00);
+
+-- --------------------------------------------------------
+-- Demo Payments & Invoices (DFD P1.4)
+-- --------------------------------------------------------
+INSERT INTO `payments` (`payment_id`, `order_id`, `customer_id`, `transaction_id`, `amount`, `payment_method`, `payment_status`, `gateway_token`, `gateway_response`, `payment_date`) VALUES
+(1, 1, 13, 'TXN-20260220-778899', 127399.00, 'UPI', 'SUCCESS', 'GTW-TOK-001', '{"status":"SUCCESS","code":"00","rrn":"202602208899"}', '2026-02-20 10:32:15'),
+(2, 2, 13, 'TXN-20260301-112233', 68999.00, 'NET_BANKING', 'SUCCESS', 'GTW-TOK-002', '{"status":"SUCCESS","code":"00","rrn":"202603011122"}', '2026-03-01 14:17:40'),
+(3, 3, 13, 'TXN-20260305-445566', 159706.00, 'CREDIT_CARD', 'SUCCESS', 'GTW-TOK-003', '{"status":"SUCCESS","code":"00","rrn":"202603054455"}', '2026-03-05 09:47:05'),
+(4, 4, 14, 'TXN-20260228-998877', 85499.00, 'UPI', 'SUCCESS', 'GTW-TOK-004', '{"status":"SUCCESS","code":"00","rrn":"202602289988"}', '2026-02-28 16:22:30');
+
+INSERT INTO `invoices` (`invoice_id`, `invoice_number`, `order_id`, `payment_id`, `customer_id`, `invoice_date`, `subtotal`, `discount`, `tax_amount`, `shipping_charge`, `total_amount`, `billing_address`, `status`) VALUES
+(1, 'INV-2026-0001', 1, 1, 13, '2026-02-20 10:35:00', 107965.25, 0.00, 19433.75, 0.00, 127399.00, 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar, Bengaluru, Karnataka - 560038', 'PAID'),
+(2, 'INV-2026-0002', 2, 2, 13, '2026-03-01 14:20:00', 58473.73, 0.00, 10525.27, 0.00, 68999.00, 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar, Bengaluru, Karnataka - 560038', 'PAID'),
+(3, 'INV-2026-0003', 3, 3, 13, '2026-03-05 09:50:00', 135344.07, 0.00, 24361.93, 0.00, 159706.00, 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar, Bengaluru, Karnataka - 560038', 'PAID'),
+(4, 'INV-2026-0004', 4, 4, 14, '2026-02-28 16:25:00', 72456.78, 0.00, 13042.22, 0.00, 85499.00, 'B-12, Shanti Niketan Society, Satellite Road, Ahmedabad, Gujarat - 380015', 'PAID');
+
+INSERT INTO `invoice_items` (`invoice_item_id`, `invoice_id`, `product_name`, `model`, `quantity`, `unit_price`, `total_price`) VALUES
+(1, 1, 'Samsung Galaxy S26 Ultra 5G', 'SM-S948B/DS', 1, 127399.00, 127399.00),
+(2, 2, 'OnePlus 15 5G', 'CPH2621', 1, 68999.00, 68999.00),
+(3, 3, 'Apple iPhone 18 Pro Max', 'A3290', 1, 159706.00, 159706.00),
+(4, 4, 'Vivo X200 Pro 5G', 'V2405A', 1, 85499.00, 85499.00);
+
+-- --------------------------------------------------------
+-- Demo Fulfillments & Shipment Events (DFD P1.5)
+-- --------------------------------------------------------
+INSERT INTO `fulfillments` (`fulfillment_id`, `order_id`, `shipment_id`, `tracking_id`, `carrier`, `shipment_date`, `estimated_delivery`, `delivered_date`, `shipment_status`, `delivery_address`, `manifest`) VALUES
+(1, 1, 'SHP-20260220-01', 'BD992837412IN', 'BlueDart Express', '2026-02-21 11:00:00', '2026-02-24 18:00:00', '2026-02-23 15:30:00', 'DELIVERED', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar, Bengaluru, Karnataka - 560038', 'MANIFEST-BD-01'),
+(2, 2, 'SHP-20260301-02', 'DEL88442299IN', 'Delhivery Express', '2026-03-02 09:30:00', '2026-03-06 18:00:00', NULL, 'IN_TRANSIT', 'Flat 402, Green Valley Apartments, 12th Main Road, Indiranagar, Bengaluru, Karnataka - 560038', 'MANIFEST-DEL-02'),
+(4, 4, 'SHP-20260228-04', 'EK44119933IN', 'Ekart Logistics', '2026-03-01 10:00:00', '2026-03-04 18:00:00', '2026-03-03 16:45:00', 'DELIVERED', 'B-12, Shanti Niketan Society, Satellite Road, Ahmedabad, Gujarat - 380015', 'MANIFEST-EK-04');
+
+INSERT INTO `shipment_events` (`event_id`, `fulfillment_id`, `status`, `location`, `description`, `event_time`) VALUES
+(1, 1, 'PICKED_UP', 'Gurugram Logistics Hub', 'Package received at Samsung logistics center', '2026-02-21 11:00:00'),
+(2, 1, 'IN_TRANSIT', 'BlueDart Hub, Mumbai', 'Dispatched from Mumbai air cargo terminal', '2026-02-22 03:30:00'),
+(3, 1, 'OUT_FOR_DELIVERY', 'Indiranagar Hub, Bengaluru', 'Out for delivery with BlueDart courier', '2026-02-23 09:15:00'),
+(4, 1, 'DELIVERED', 'Indiranagar, Bengaluru', 'Delivered safely to Rahul Sharma (Signature verified)', '2026-02-23 15:30:00'),
+(5, 2, 'PICKED_UP', 'Bengaluru Central Warehouse', 'Shipment picked up by Delhivery dispatch agent', '2026-03-02 09:30:00'),
+(6, 2, 'IN_TRANSIT', 'Nelamangala Processing Hub', 'Sorted and departed toward regional distribution hub', '2026-03-03 01:20:00'),
+(7, 4, 'PICKED_UP', 'Noida Logistics Center', 'Package dispatched via Ekart logistics', '2026-03-01 10:00:00'),
+(8, 4, 'IN_TRANSIT', 'Ahmedabad Central Hub', 'Arrived at Ahmedabad hub and processed', '2026-03-02 14:00:00'),
+(9, 4, 'DELIVERED', 'Satellite, Ahmedabad', 'Delivered to Priya Patel', '2026-03-03 16:45:00');
+
+-- --------------------------------------------------------
+-- Demo Verified Reviews
+-- --------------------------------------------------------
+INSERT INTO `reviews` (`review_id`, `product_id`, `customer_id`, `rating`, `title`, `comment`, `status`, `created_at`) VALUES
+(1, 5, 13, 5, 'Unmatched Galaxy AI & Anti-Reflective Screen', 'The titanium armor build is gorgeous. Outdoor visibility is unbelievable with the anti-reflective glass.', 'APPROVED', '2026-02-24 10:00:00'),
+(2, 1, 13, 5, 'A20 Pro Silicon is in a league of its own', 'Battery life and thermal efficiency are unbelievable. 10x optical tetraprism zoom produces breathtaking clarity.', 'APPROVED', '2026-03-06 11:30:00'),
+(3, 12, 14, 5, 'Exceptional Zeiss Telephoto Optics', 'The periscope telephoto and portrait tones are studio-grade. Oxygen Blue finish is premium and tactile.', 'APPROVED', '2026-03-04 18:00:00'),
+(4, 10, 13, 4, 'Blazing 100W Charging & Smooth 120Hz', 'Charges from 0 to 100% in 25 minutes. Hasselblad color science makes every photo pop with natural colors.', 'APPROVED', '2026-03-04 20:15:00');

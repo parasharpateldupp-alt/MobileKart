@@ -30,7 +30,7 @@ $customer = $uStmt->fetch();
 
 // Fetch Cart Items
 $cStmt = $db->prepare("
-    SELECT ci.cart_item_id, ci.quantity, p.product_id, p.supplier_id, p.product_name, p.model, p.price, p.discount, p.final_price, p.stock_quantity, p.status, p.image, b.name AS brand_name
+    SELECT ci.cart_item_id, ci.quantity, p.product_id, p.supplier_id, p.product_name, p.model, p.price, p.discount, p.final_price, p.stock_quantity, p.status, p.image, p.ram, p.storage, p.color, b.name AS brand_name
     FROM cart c
     JOIN cart_items ci ON c.cart_id = ci.cart_id
     JOIN products p ON ci.product_id = p.product_id
@@ -108,6 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
     if (empty($shipping_name) || empty($shipping_phone) || empty($shipping_address) || empty($shipping_city) || empty($shipping_state) || empty($shipping_pincode)) {
         $error = "Please fill in all shipping and contact details.";
+    } elseif (!preg_match('/^[6-9]\d{9}$/', preg_replace('/[\s\-\+91]/', '', $shipping_phone))) {
+        $error = "Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).";
+    } elseif (!preg_match('/^[1-9]\d{5}$/', trim($shipping_pincode))) {
+        $error = "Please enter a valid 6-digit Indian postal PIN code (e.g. 560038).";
     } else {
         try {
             $db->beginTransaction();
@@ -173,9 +177,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
 
+            $nowStr = date('Y-m-d H:i:s');
+            $expiryStr = date('Y-m-d H:i:s', strtotime("+" . STOCK_RESERVATION_MINUTES . " minutes"));
             $insRes = $db->prepare("
                 INSERT INTO stock_reservations (order_id, product_id, quantity, reserved_at, expiry_time, status)
-                VALUES (?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL ? MINUTE), 'ACTIVE')
+                VALUES (?, ?, ?, ?, ?, 'ACTIVE')
             ");
 
             foreach ($cartItems as $item) {
@@ -194,15 +200,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     $orderId,
                     $item['product_id'],
                     $item['quantity'],
-                    STOCK_RESERVATION_MINUTES
+                    $nowStr,
+                    $expiryStr
                 ]);
             }
 
             // Clear Customer Cart since items are now transferred to Pending Order
             $delCart = $db->prepare("
-                DELETE ci FROM cart_items ci
-                JOIN cart c ON ci.cart_id = c.cart_id
-                WHERE c.user_id = ?
+                DELETE FROM cart_items 
+                WHERE cart_id IN (SELECT cart_id FROM cart WHERE user_id = ?)
             ");
             $delCart->execute([$userId]);
 
